@@ -13,8 +13,6 @@
  */
 package org.openmrs.module.datacomparison;
 
-import java.util.Date;
-
 public class ElementMeta {
 
 	private String propertyValue;
