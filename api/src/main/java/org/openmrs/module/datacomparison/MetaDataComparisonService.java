@@ -1,6 +1,5 @@
 package org.openmrs.module.datacomparison;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,7 +12,8 @@ public class MetaDataComparisonService {
 	
 	private static final String NULL = "null";
 
-	public List<RowMeta> getRowMetaList(Object existingItem, Object incomingItem) throws IllegalAccessException {
+	@SuppressWarnings("rawtypes")
+    public List<RowMeta> getRowMetaList(Object existingItem, Object incomingItem) throws IllegalAccessException {
 		
 		List<RowMeta> rowMetaList = new ArrayList<RowMeta>();
 		
