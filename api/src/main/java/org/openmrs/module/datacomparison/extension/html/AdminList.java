@@ -47,7 +47,7 @@ public class AdminList extends AdministrationSectionExt {
 		
 		Map<String, String> map = new HashMap<String, String>();
 		
-		map.put("module/datacomparison/datacomparisonmoduleLink.form", "datacomparison.replace.this.link.name");
+		map.put("module/datacomparison/datacomparisonmoduleLink.form", "Comparison View");
 		
 		return map;
 	}

@@ -1,0 +1,34 @@
+@CHARSET "ISO-8859-1";
+
+div#comparisonViewContainer table tr.green label.propertyValue {
+	color : green;
+}
+
+div#comparisonViewContainer table tr.red label.propertyValue {
+	color : red;
+}
+
+div#comparisonViewContainer table tr label.propertyName {
+	color : black;
+}
+
+div#comparisonViewContainer table #seperatorColumn {
+	width : 50px;
+}
+
+.className {
+	font-weight: bold;
+}
+
+div#comparisonViewContainer table tr .imageClass {
+	height: 7px;
+    width: 7px;
+}
+
+div#comparisonViewContainer table tr td {
+	padding-right : 20px;
+}
+
+div#comparisonViewContainer table tr:hover {
+	background : #F0E68C
+}

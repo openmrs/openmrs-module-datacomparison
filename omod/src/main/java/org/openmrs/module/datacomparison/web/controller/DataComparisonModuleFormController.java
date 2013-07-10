@@ -13,7 +13,9 @@
  */
 package org.openmrs.module.datacomparison.web.controller;
 
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -22,7 +24,11 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
+import org.openmrs.module.datacomparison.MetaDataComparisonService;
+import org.openmrs.module.datacomparison.RowMeta;
+import org.openmrs.module.datacomparison.SimpleObject;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,15 +45,38 @@ public class DataComparisonModuleFormController{
 	protected final Log log = LogFactory.getLog(getClass());
 	
 	/** Success form view name */
-	private final String SUCCESS_FORM_VIEW = "/module/datacomparison/datacomparisonmoduleForm";
+	private final String SUCCESS_FORM_VIEW = "/module/datacomparison/comparisonView";
 	
 	/**
 	 * Initially called after the formBackingObject method to get the landing form name  
 	 * @return String form view name
 	 */
 	@RequestMapping(method = RequestMethod.GET)
-	public String showForm(){
+	public String showForm(final ModelMap model) throws IllegalAccessException{
+		
+		SimpleObject existingItem = new SimpleObject();
+        SimpleObject incomingItem = new SimpleObject();
+        
+        existingItem.setSimpleInt(0);
+        existingItem.setSimpleBoolean(null);
+        existingItem.setSimpleString("Existing");
+        existingItem.setSimpleFloat(12.5f);
+        existingItem.setSimpleDate(Calendar.getInstance().getTime());
+        
+        incomingItem.setSimpleInt(0);
+        incomingItem.setSimpleBoolean((Boolean) false);
+        incomingItem.setSimpleString("Incoming");
+        incomingItem.setSimpleFloat(13.5f);
+        incomingItem.setSimpleDate(Calendar.getInstance().getTime());
+        
+        MetaDataComparisonService co = new MetaDataComparisonService();
+        List<RowMeta> rowMetaList = co.getRowMetaList((Object) existingItem, (Object) incomingItem);
+        
+        model.addAttribute("className", existingItem.getClass().getName());
+        model.addAttribute("rowMetaList", rowMetaList);
+		
 		return SUCCESS_FORM_VIEW;
+		
 	}
 	
 	/**
