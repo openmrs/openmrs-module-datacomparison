@@ -15,6 +15,10 @@ package org.openmrs.module.datacomparison;
 
 import java.util.Map;
 
+/**
+ * This DTO class contains meta data of a row in comparison view,
+ * which represent the same property data of each meta data object.
+ */
 public class RowMeta {
 
 	private String propertyName;
@@ -22,34 +26,74 @@ public class RowMeta {
 	private boolean isSimilar;
 	private int level;
 	
+	/**
+	 * Set the property name.
+	 * 
+	 * @param propertyName The string to set.
+	 */
 	public void setPropertyName(String propertyName) {
 		this.propertyName = propertyName;
 	}
 	
+	/**
+	 * Get property name.
+	 * 
+	 * @return The propertyName.
+	 */
 	public String getPropertyName() {
 		return this.propertyName;
 	}
 	
+	/**
+	 * Set the map, containing ElementMeta objects related to given meta data objects.
+	 * 
+	 * @param metaItems
+	 */
 	public void setMetaItems(Map<String, ElementMeta> metaItems) {
 		this.metaItems = metaItems;
 	}
 	
+	/**
+	 * Get the map, containing ElementMeta objects related to given meta data objects.
+	 * 
+	 * @return The metaItems.
+	 */
 	public Map<String, ElementMeta> getMetaItems() {
 		return metaItems;
 	}
 	
+	/**
+	 * Set the equality status of same property in the given objects.
+	 * 
+	 * @param isSimilar The boolean value to set.
+	 */
 	public void setIsSimilar(boolean isSimilar) {
 		this.isSimilar = isSimilar;
 	}
 	
+	/**
+	 * Get the equality status of same property in the given objects.
+	 * 
+	 * @return The isSimilar. 
+	 */
 	public boolean getIsSimilar() {
 		return isSimilar;
 	}
 	
+	/**
+	 * Set the level of the representing property.
+	 * 
+	 * @param level The integer to set.
+	 */
 	public void setLevel(int level) {
 		this.level = level;
 	}
 	
+	/**
+	 * Get the level of the representing property.
+	 * 
+	 * @return The level.
+	 */
 	public int getLevel() {
 		return level;
 	}

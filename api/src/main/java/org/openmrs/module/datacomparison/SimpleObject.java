@@ -15,6 +15,9 @@ package org.openmrs.module.datacomparison;
 
 import java.util.Date;
 
+/**
+ * This DTO class is used to represent an objects with simple properties. 
+ */
 public class SimpleObject {
 	
 	private int simpleInt;
@@ -23,42 +26,92 @@ public class SimpleObject {
 	private Date simpleDate;
 	private String simpleString;
 	
+	/**
+	 * Set integer value.
+	 * 
+	 * @param simpleInt The integer value to set.
+	 */
 	public void setSimpleInt(int simpleInt) {
 		this.simpleInt = simpleInt;
 	}
 	
+	/**
+	 * Get integer value.
+	 * 
+	 * @return The simpleInt.
+	 */
 	public int getSimpleInt() {
 		return simpleInt;
 	}
 	
+	/**
+	 * Set float value.
+	 * 
+	 * @param simpleFloat The float value to set.
+	 */
 	public void setSimpleFloat(float simpleFloat) {
 		this.simpleFloat = simpleFloat;
 	}
 	
+	/**
+	 * Get float value.
+	 * 
+	 * @return The simpleFloat
+	 */
 	public float getSimpleFloat() {
 		return simpleFloat;
 	}
 	
+	/**
+	 * Set Boolean value.
+	 * 
+	 * @param simpleBoolean The Boolean to set.
+	 */
 	public void setSimpleBoolean(Boolean simpleBoolean) {
 		this.simpleBoolean = simpleBoolean;
 	}
 	
+	/**
+	 * Get Boolean value.
+	 * 
+	 * @return simpleBoolean;
+	 */
 	public Boolean getSimpleBoolean() {
 		return simpleBoolean;
 	}
 	
+	/**
+	 * Set Date value.
+	 * 
+	 * @param simpleDate The Date to set.
+	 */
 	public void setSimpleDate(Date simpleDate) {
 		this.simpleDate = simpleDate;
 	}
 	
+	/**
+	 * Get Date value.
+	 * 
+	 * @return The simpleDate.
+	 */
 	public Date getSimpleDate() {
 		return simpleDate;
 	}
 	
+	/**
+	 * Set String value.
+	 * 
+	 * @param simpleString The String to set.
+	 */
 	public void setSimpleString(String simpleString) {
 		this.simpleString = simpleString;
 	}
 	
+	/**
+	 * Get String value.
+	 * 
+	 * @return The simpleString.
+	 */
 	public String getSimpleString() {
 		return simpleString;
 	}

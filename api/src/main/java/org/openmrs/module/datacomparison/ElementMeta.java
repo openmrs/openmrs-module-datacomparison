@@ -13,6 +13,10 @@
  */
 package org.openmrs.module.datacomparison;
 
+/**
+ * This DTO class contains the meta data of a property in 
+ * given meta data object in data comparison view.
+ */
 public class ElementMeta {
 
 	private String propertyValue;
@@ -20,34 +24,74 @@ public class ElementMeta {
 	private boolean isComplex;
 	private int propertyType;
 	
+	/**
+	 * Set the property value of particular element.
+	 * 
+	 * @param propertyValue The String to set.
+	 */
 	public void setPropertyValue(String propertyValue) {
 		this.propertyValue = propertyValue;
 	}
 	
+	/**
+	 * Get the property value.
+	 * 
+	 * @return The propertyValue.
+	 */
 	public String getPropertyValue() {
 		return propertyValue;
 	}
 	
+	/**
+	 * Set the level of element.
+	 * 
+	 * @param level The integer to set.
+	 */
 	public void setLevel(int level) {
 		this.level = level;
 	}
 	
+	/**
+	 * Get the level of element.
+	 * 
+	 * @return The level.
+	 */
 	public int getLevel() {
 		return level;
 	}
 	
+	/**
+	 * Set the element complex status.
+	 * 
+	 * @param isComplex The boolean value to set.
+	 */
 	public void setIsComplex(boolean isComplex) {
 		this.isComplex = isComplex;
 	}
 	
+	/**
+	 * Get the element complex status.
+	 * 
+	 * @return The isComplex.
+	 */
 	public boolean getIsComplex() {
 		return isComplex;
 	}
 	
+	/**
+	 * Set the property type of the element.
+	 * 
+	 * @param propertyType The integer to set.
+	 */
 	public void setPropertyType(int propertyType) {
 		this.propertyType = propertyType;
 	}
 	
+	/**
+	 * Get the property type of the element.
+	 * 
+	 * @return The propertyType.
+	 */
 	public int getPropertyType() {
 		return propertyType;
 	}
