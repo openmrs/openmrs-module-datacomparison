@@ -32,7 +32,7 @@
 				</c:forEach>
 			</c:when>
 			<c:otherwise>
-				<tr>No Results Found</tr>
+				<tr><spring:message code="datacomparison.messages.noresultsfound" /></tr>
 			</c:otherwise>
 		</c:choose>
 	</table>
