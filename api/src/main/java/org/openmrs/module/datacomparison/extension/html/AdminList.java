@@ -16,15 +16,23 @@ package org.openmrs.module.datacomparison.extension.html;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openmrs.api.context.Context;
 import org.openmrs.module.Extension;
 import org.openmrs.module.web.extension.AdministrationSectionExt;
 
 /**
  * This class defines the links that will appear on the administration page under the
- * "basicmodule.title" heading. This extension is enabled by defining (uncommenting) it in the
+ * "datacomparison.title" heading. This extension is enabled by defining (uncommenting) it in the
  * /metadata/config.xml file.
  */
 public class AdminList extends AdministrationSectionExt {
+	
+	private static final String MESSAGE_CODE_DATACOMPARISON_TITLE = "datacomparison.title";
+	
+	private static final String MESSAGE_CODE_COMPARISON_VIEW_LINK = "datacomparison.link.comparisonview";
+	
+	private static final String COMAPARISON_VIEW_URL = "module/datacomparison/datacomparisonmoduleLink.form";
+	
 	
 	/**
 	 * @see org.openmrs.module.web.extension.AdministrationSectionExt#getMediaType()
@@ -37,7 +45,7 @@ public class AdminList extends AdministrationSectionExt {
 	 * @see org.openmrs.module.web.extension.AdministrationSectionExt#getTitle()
 	 */
 	public String getTitle() {
-		return "datacomparison.title";
+		return MESSAGE_CODE_DATACOMPARISON_TITLE;
 	}
 	
 	/**
@@ -47,7 +55,10 @@ public class AdminList extends AdministrationSectionExt {
 		
 		Map<String, String> map = new HashMap<String, String>();
 		
-		map.put("module/datacomparison/datacomparisonmoduleLink.form", "Comparison View");
+		map.put(
+			COMAPARISON_VIEW_URL,
+			Context.getMessageSourceService().getMessage(MESSAGE_CODE_COMPARISON_VIEW_LINK)
+		);
 		
 		return map;
 	}

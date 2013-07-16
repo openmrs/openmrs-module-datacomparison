@@ -19,11 +19,12 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.openmrs.module.Extension.MEDIA_TYPE;
 import org.openmrs.module.datacomparison.extension.html.AdminList;
+import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 /**
  * This test validates the AdminList extension class
  */
-public class AdminListExtensionTest {
+public class AdminListExtensionTest extends BaseModuleContextSensitiveTest {
 	
 	/**
 	 * Get the links for the extension class
