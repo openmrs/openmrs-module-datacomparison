@@ -24,7 +24,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.datacomparison.MetaDataComparisonService;
 import org.openmrs.module.datacomparison.RowMeta;
 import org.openmrs.module.datacomparison.SimpleObject;
 import org.springframework.stereotype.Controller;
@@ -69,7 +68,7 @@ public class DataComparisonModuleFormController{
         incomingItem.setSimpleFloat(13.5f);
         incomingItem.setSimpleDate(Calendar.getInstance().getTime());
         
-        MetaDataComparisonService co = new MetaDataComparisonService();
+        org.openmrs.module.datacomparison.api.MetaDataComparisonService co = Context.getService(org.openmrs.module.datacomparison.api.MetaDataComparisonService.class);
         List<RowMeta> rowMetaList = co.getRowMetaList((Object) existingItem, (Object) incomingItem);
         
         model.addAttribute("className", existingItem.getClass().getName());
