@@ -51,7 +51,7 @@ public class DataComparisonModuleFormController{
 	 * @return String form view name
 	 */
 	@RequestMapping(method = RequestMethod.GET)
-	public String showForm(final ModelMap model) throws IllegalAccessException{
+	public String showForm(final ModelMap model) throws IllegalAccessException, Exception {
 		
 		SimpleObject existingItem = new SimpleObject();
         SimpleObject incomingItem = new SimpleObject();
@@ -68,11 +68,20 @@ public class DataComparisonModuleFormController{
         incomingItem.setSimpleFloat(13.5f);
         incomingItem.setSimpleDate(Calendar.getInstance().getTime());
         
-        org.openmrs.module.datacomparison.api.MetaDataComparisonService co = Context.getService(org.openmrs.module.datacomparison.api.MetaDataComparisonService.class);
-        List<RowMeta> rowMetaList = co.getRowMetaList((Object) existingItem, (Object) incomingItem);
-        
-        model.addAttribute("className", existingItem.getClass().getName());
-        model.addAttribute("rowMetaList", rowMetaList);
+        Context.addProxyPrivilege("View Patients");
+    	Patient existingPatient = Context.getPatientService().getPatient(101);
+    	Patient incomingPatient = Context.getPatientService().getPatient(105);
+    	Context.removeProxyPrivilege("View Patients");
+    	
+    	if ((existingItem != null) && (incomingItem != null)) {
+    		
+    		org.openmrs.module.datacomparison.api.MetaDataComparisonService co = Context.getService(org.openmrs.module.datacomparison.api.MetaDataComparisonService.class);
+            List<RowMeta> rowMetaList = co.getRowMetaList((Object) existingPatient, (Object) incomingPatient);
+            
+            model.addAttribute("className", existingPatient.getClass().getName());
+            model.addAttribute("rowMetaList", rowMetaList);
+    		
+    	}
 		
 		return SUCCESS_FORM_VIEW;
 		

@@ -19,12 +19,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.openmrs.OpenmrsObject;
 import org.openmrs.api.APIException;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.datacomparison.DataComparisonConsts;
 import org.openmrs.module.datacomparison.ElementMeta;
 import org.openmrs.module.datacomparison.RowMeta;
 import org.openmrs.module.datacomparison.api.MetaDataComparisonService;
+import org.openmrs.util.Reflect;
 
 /**
  * Default implementation of {@link MetaDataComparisonService}.
@@ -51,19 +53,19 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 		Map<String, ElementMeta> metaItems = null;
 		
 		Class c = existingItem.getClass();
-		Field[] fields = c.getDeclaredFields();
+		List<Field> fields = Reflect.getAllFields(c);
 		
-		for (int i=0; i<fields.length; i++) {
+		for (int i=0; i<fields.size(); i++) {
 			
 			existingItemMeta = new ElementMeta();
 			incomingItemMeta = new ElementMeta();
 			rowMeta = new RowMeta();
 			metaItems = new HashMap<String, ElementMeta>();
 			
-			fields[i].setAccessible(true);
+			fields.get(i).setAccessible(true);
 			
-			Object existingItemFieldValue = fields[i].get(existingItem);
-			Object incomingItemFieldValue = fields[i].get(incomingItem);
+			Object existingItemFieldValue = fields.get(i).get(existingItem);
+			Object incomingItemFieldValue = fields.get(i).get(incomingItem);
 			
 			if (existingItemFieldValue != null) {
 				
@@ -73,9 +75,26 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
                 	existingItemMeta.setPropertyType(DataComparisonConsts.SIMPLE_DATA_TYPE);
                 	existingItemMeta.setPropertyValue(existingItemFieldValue.toString());
                 	
+                } else if (Reflect.isCollection(existingItemFieldValue)) {
+                	
+                	// Dummy code for testing
+                	existingItemMeta.setPropertyType(DataComparisonConsts.COLLECTION_DATA_TYPE);
+                	existingItemMeta.setPropertyValue("Collection Data Type");
+                	existingItemMeta.setIsComplex(false);
+                	
+                } else if (isOpenMrsObject(existingItemFieldValue)) {
+                	
+                	// Dummy code for testing
+                	existingItemMeta.setPropertyType(DataComparisonConsts.OPENMRS_DATA_TYPE);
+                	existingItemMeta.setPropertyValue("OpenMRS object");
+                	existingItemMeta.setIsComplex(false);
+                	
                 } else {
                 	
-                	existingItemMeta.setIsComplex(true);
+                	// Dummy code for testing
+                	existingItemMeta.setPropertyType(3);
+                	existingItemMeta.setPropertyValue("Undefined Property");
+                	existingItemMeta.setIsComplex(false);
                 	
                 }
                 
@@ -93,9 +112,26 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
                 	incomingItemMeta.setPropertyType(DataComparisonConsts.SIMPLE_DATA_TYPE);
                 	incomingItemMeta.setPropertyValue(incomingItemFieldValue.toString());
                 	
+                } else if (Reflect.isCollection(incomingItemFieldValue)) {
+                	
+                	// Dummy code for testing
+                	incomingItemMeta.setPropertyType(DataComparisonConsts.COLLECTION_DATA_TYPE);
+                	incomingItemMeta.setPropertyValue("Collection Data Type");
+                	incomingItemMeta.setIsComplex(false);
+                	
+                } else if (isOpenMrsObject(incomingItemFieldValue))  {
+                	
+                	// Dummy code for testing
+                	incomingItemMeta.setPropertyType(DataComparisonConsts.OPENMRS_DATA_TYPE);
+                	incomingItemMeta.setPropertyValue("OpenMRS object");
+                	incomingItemMeta.setIsComplex(false);
+                	
                 } else {
                 	
-                	incomingItemMeta.setIsComplex(true);
+                	// Dummy code for testing
+                	incomingItemMeta.setPropertyType(3);
+                	incomingItemMeta.setPropertyValue("Undefined Property");
+                	incomingItemMeta.setIsComplex(false);
                 	
                 }
                 
@@ -120,7 +156,7 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 			metaItems.put("existingItem", existingItemMeta);
 			metaItems.put("incomingItem", incomingItemMeta);
 			
-			rowMeta.setPropertyName(fields[i].getName());
+			rowMeta.setPropertyName(fields.get(i).getName());
 			rowMeta.setMetaItems(metaItems);
 			rowMeta.setLevel(0);
 			
@@ -151,8 +187,19 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
     		data.getClass() == java.lang.Byte.class ||
 			data.getClass() == java.lang.Character.class ||
 			data.getClass() == java.lang.Short.class ||
-    		data.getClass() == java.util.Date.class;
+    		data.getClass() == java.util.Date.class ||
+			data.getClass() == java.sql.Timestamp.class;
 		
+	}
+	
+	/**
+	 * Check whether the object is OpenMRS DTO.
+	 * 
+	 * @param data the Object to check
+	 * @return boolean
+	 */
+	private boolean isOpenMrsObject(Object data) {
+		return OpenmrsObject.class.isAssignableFrom(data.getClass());
 	}
 	
 }

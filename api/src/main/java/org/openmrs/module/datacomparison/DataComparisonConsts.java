@@ -21,6 +21,12 @@ public class DataComparisonConsts {
 	/** Represents simple data types. */
 	public static final int SIMPLE_DATA_TYPE = 0;
 	
+	/** Represents Collection data types. */
+	public static final int COLLECTION_DATA_TYPE = 1;
+	
+	/** Represents OpenMRS data types. */
+	public static final int OPENMRS_DATA_TYPE = 2;
+	
 	/** Represent null string to show null values in comparison view. */
 	public static final String NULL = "null";
 	
