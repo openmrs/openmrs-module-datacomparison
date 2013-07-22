@@ -69,42 +69,7 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 			
 			if (existingItemFieldValue != null) {
 				
-                if (isSimpleDataType(existingItemFieldValue)) {
-                	
-                	existingItemMeta.setIsComplex(false);
-                	existingItemMeta.setPropertyType(DataComparisonConsts.SIMPLE_DATA_TYPE);
-                	existingItemMeta.setPropertyValue(existingItemFieldValue.toString());
-                	
-                } else if (Reflect.isCollection(existingItemFieldValue)) {
-                	
-                	// Dummy code for testing
-                	existingItemMeta.setPropertyType(DataComparisonConsts.COLLECTION_DATA_TYPE);
-                	existingItemMeta.setPropertyValue("Collection Data Type");
-                	existingItemMeta.setIsComplex(false);
-                	
-                } else if (isMap(existingItemFieldValue)) {
-                	
-                	// Dummy code for testing
-                	existingItemMeta.setPropertyType(DataComparisonConsts.MAP_DATA_TYPE);
-                	existingItemMeta.setPropertyValue("Map Data Type");
-                	existingItemMeta.setIsComplex(false);
-                	
-                } else if (isOpenMrsObject(existingItemFieldValue)) {
-                
-                	
-                	// Dummy code for testing
-                	existingItemMeta.setPropertyType(DataComparisonConsts.OPENMRS_DATA_TYPE);
-                	existingItemMeta.setPropertyValue("OpenMRS object");
-                	existingItemMeta.setIsComplex(false);
-                	
-                } else {
-                	
-                	// Dummy code for testing
-                	existingItemMeta.setPropertyType(3);
-                	existingItemMeta.setPropertyValue("Undefined Property");
-                	existingItemMeta.setIsComplex(false);
-                	
-                }
+				existingItemMeta = getElementMetaObjectAfterSetProperties(existingItemMeta, existingItemFieldValue);
                 
             } else {
             	existingItemMeta.setIsComplex(false);
@@ -114,41 +79,7 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 			
 			if (incomingItemFieldValue != null) {
 				
-                if (isSimpleDataType(incomingItemFieldValue)) {
-                	
-                	incomingItemMeta.setIsComplex(false);
-                	incomingItemMeta.setPropertyType(DataComparisonConsts.SIMPLE_DATA_TYPE);
-                	incomingItemMeta.setPropertyValue(incomingItemFieldValue.toString());
-                	
-                } else if (Reflect.isCollection(incomingItemFieldValue)) {
-                	
-                	// Dummy code for testing
-                	incomingItemMeta.setPropertyType(DataComparisonConsts.COLLECTION_DATA_TYPE);
-                	incomingItemMeta.setPropertyValue("Collection Data Type");
-                	incomingItemMeta.setIsComplex(false);
-                	
-                } else if (isMap(incomingItemFieldValue)) {
-                	
-                	// Dummy code for testing
-                	incomingItemMeta.setPropertyType(DataComparisonConsts.MAP_DATA_TYPE);
-                	incomingItemMeta.setPropertyValue("Map Data Type");
-                	incomingItemMeta.setIsComplex(false);
-                	
-                } else if (isOpenMrsObject(incomingItemFieldValue))  {
-                	
-                	// Dummy code for testing
-                	incomingItemMeta.setPropertyType(DataComparisonConsts.OPENMRS_DATA_TYPE);
-                	incomingItemMeta.setPropertyValue("OpenMRS object");
-                	incomingItemMeta.setIsComplex(false);
-                	
-                } else {
-                	
-                	// Dummy code for testing
-                	incomingItemMeta.setPropertyType(3);
-                	incomingItemMeta.setPropertyValue("Undefined Property");
-                	incomingItemMeta.setIsComplex(false);
-                	
-                }
+				incomingItemMeta = getElementMetaObjectAfterSetProperties(incomingItemMeta, incomingItemFieldValue);
                 
 			} else {
 				incomingItemMeta.setIsComplex(false);
@@ -180,6 +111,56 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 		}
 		
 		return rowMetaList;
+		
+	}
+	
+	/**
+	 * Set the ElementMeta properties using the relevant metadata object property,
+	 * and return ElementMeta object.
+	 * 
+	 * @param elementMetaItem the meta data for the considering object property
+	 * @param data the considering property value
+	 * @return ElementMeta 
+	 */
+	private ElementMeta getElementMetaObjectAfterSetProperties(ElementMeta elementMetaItem, Object data) {
+		
+		if (isSimpleDataType(data)) {
+        	
+			elementMetaItem.setIsComplex(false);
+			elementMetaItem.setPropertyType(DataComparisonConsts.SIMPLE_DATA_TYPE);
+			elementMetaItem.setPropertyValue(data.toString());
+        	
+        } else if (Reflect.isCollection(data)) {
+        	
+        	// Dummy code for testing
+        	elementMetaItem.setPropertyType(DataComparisonConsts.COLLECTION_DATA_TYPE);
+        	elementMetaItem.setPropertyValue("Collection Data Type");
+        	elementMetaItem.setIsComplex(false);
+        	
+        } else if (isMap(data)) {
+        	
+        	// Dummy code for testing
+        	elementMetaItem.setPropertyType(DataComparisonConsts.MAP_DATA_TYPE);
+        	elementMetaItem.setPropertyValue("Map Data Type");
+        	elementMetaItem.setIsComplex(false);
+        	
+        } else if (isOpenMrsObject(data)) {
+        	
+        	// Dummy code for testing
+        	elementMetaItem.setPropertyType(DataComparisonConsts.OPENMRS_DATA_TYPE);
+        	elementMetaItem.setPropertyValue("OpenMRS object");
+        	elementMetaItem.setIsComplex(false);
+        	
+        } else {
+        	
+        	// Dummy code for testing
+        	elementMetaItem.setPropertyType(3);
+        	elementMetaItem.setPropertyValue("Undefined Property");
+        	elementMetaItem.setIsComplex(false);
+        	
+        }
+		
+		return elementMetaItem;
 		
 	}
 	
