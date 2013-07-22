@@ -24,8 +24,11 @@ public class DataComparisonConsts {
 	/** Represents Collection data types. */
 	public static final int COLLECTION_DATA_TYPE = 1;
 	
+	/** Represents Map data types. */
+	public static final int MAP_DATA_TYPE = 2;
+	
 	/** Represents OpenMRS data types. */
-	public static final int OPENMRS_DATA_TYPE = 2;
+	public static final int OPENMRS_DATA_TYPE = 3;
 	
 	/** Represent null string to show null values in comparison view. */
 	public static final String NULL = "null";

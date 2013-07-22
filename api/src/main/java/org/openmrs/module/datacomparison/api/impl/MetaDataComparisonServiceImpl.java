@@ -82,7 +82,15 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
                 	existingItemMeta.setPropertyValue("Collection Data Type");
                 	existingItemMeta.setIsComplex(false);
                 	
+                } else if (isMap(existingItemFieldValue)) {
+                	
+                	// Dummy code for testing
+                	existingItemMeta.setPropertyType(DataComparisonConsts.MAP_DATA_TYPE);
+                	existingItemMeta.setPropertyValue("Map Data Type");
+                	existingItemMeta.setIsComplex(false);
+                	
                 } else if (isOpenMrsObject(existingItemFieldValue)) {
+                
                 	
                 	// Dummy code for testing
                 	existingItemMeta.setPropertyType(DataComparisonConsts.OPENMRS_DATA_TYPE);
@@ -117,6 +125,13 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
                 	// Dummy code for testing
                 	incomingItemMeta.setPropertyType(DataComparisonConsts.COLLECTION_DATA_TYPE);
                 	incomingItemMeta.setPropertyValue("Collection Data Type");
+                	incomingItemMeta.setIsComplex(false);
+                	
+                } else if (isMap(incomingItemFieldValue)) {
+                	
+                	// Dummy code for testing
+                	incomingItemMeta.setPropertyType(DataComparisonConsts.MAP_DATA_TYPE);
+                	incomingItemMeta.setPropertyValue("Map Data Type");
                 	incomingItemMeta.setIsComplex(false);
                 	
                 } else if (isOpenMrsObject(incomingItemFieldValue))  {
@@ -200,6 +215,16 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 	 */
 	private boolean isOpenMrsObject(Object data) {
 		return OpenmrsObject.class.isAssignableFrom(data.getClass());
+	}
+	
+	/**
+	 * Check whether the object is Map.
+	 * 
+	 * @param data the Object to check
+	 * @return boolean
+	 */
+	private boolean isMap(Object data) {
+		return Map.class.isAssignableFrom(data.getClass());
 	}
 	
 }
