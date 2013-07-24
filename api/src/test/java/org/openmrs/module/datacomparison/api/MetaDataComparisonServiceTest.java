@@ -13,22 +13,30 @@
  */
 package org.openmrs.module.datacomparison.api;
 
+import junit.framework.Assert;
+
 import org.junit.Before;
+import org.junit.Test;
 import org.openmrs.api.context.Context;
-import org.openmrs.test.BaseContextSensitiveTest;
+import org.openmrs.test.BaseModuleContextSensitiveTest;
 
 /**
  * This class tests methods in the MetaDataComparisonService class
  */
-public class MetaDataComparisonServiceTest extends BaseContextSensitiveTest {
+public class MetaDataComparisonServiceTest extends BaseModuleContextSensitiveTest {
 	
-	protected static MetaDataComparisonService metaDataComparisonService = null;
+	private MetaDataComparisonService metaDataComparisonService = null;
 	
 	@Before
 	public void runBeforeAllTests() throws Exception {
 		if (metaDataComparisonService == null) {
 			metaDataComparisonService = Context.getService(MetaDataComparisonService.class);
 		}
+	}
+	
+	@Test
+	public void dummyTest() {
+		Assert.assertTrue(true);
 	}
 	
 }
