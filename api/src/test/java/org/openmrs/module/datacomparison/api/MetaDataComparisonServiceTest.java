@@ -77,7 +77,7 @@ public class MetaDataComparisonServiceTest extends BaseModuleContextSensitiveTes
 	}
 	
 	@Test
-	public void getChildElementMetaForEqualChilddMeta() {
+	public void getChildElementMetaForEqualChildMeta() {
 		
 		Map<String, ElementMeta> metaItems = new HashMap<String, ElementMeta>();
 		ElementMeta existingItem = new ElementMeta();
@@ -117,7 +117,7 @@ public class MetaDataComparisonServiceTest extends BaseModuleContextSensitiveTes
 	}
 	
 	@Test
-	public void getChildElementMetaForPartiallyEqualChilddMeta() {
+	public void getChildElementMetaForPartiallyEqualChildMeta() {
 		
 		Map<String, ElementMeta> metaItems = new HashMap<String, ElementMeta>();
 		ElementMeta existingItem = new ElementMeta();
@@ -158,7 +158,7 @@ public class MetaDataComparisonServiceTest extends BaseModuleContextSensitiveTes
 	}
 	
 	@Test
-	public void getChildElementMetaForNonEqualChilddMeta() {
+	public void getChildElementMetaForNonEqualChildMeta() {
 		
 		Map<String, ElementMeta> metaItems = new HashMap<String, ElementMeta>();
 		ElementMeta existingItem = new ElementMeta();
@@ -194,6 +194,41 @@ public class MetaDataComparisonServiceTest extends BaseModuleContextSensitiveTes
 		Assert.assertEquals(3, resultedExistingMeta.getSubElmentMetaList().size());
 		Assert.assertEquals(2, resultedIncomingMeta.getSubElmentMetaList().size());
 		Assert.assertFalse(resultedExistingMeta.getSubElmentMetaList().get(1).equals(resultedIncomingMeta.getSubElmentMetaList().get(1)));
+		
+	}
+	
+	@Test
+	public void getChildElementMetaForNullChild() {
+		
+		Map<String, ElementMeta> metaItems = new HashMap<String, ElementMeta>();
+		ElementMeta existingItem = new ElementMeta();
+		ElementMeta incomingItem = new ElementMeta();
+		
+		existingItem.setIsComplex(true);
+		existingItem.setPropertyType(DataComparisonConsts.COLLECTION_DATA_TYPE);
+		
+		incomingItem.setIsComplex(false);
+		incomingItem.setPropertyType(DataComparisonConsts.SIMPLE_DATA_TYPE);
+		
+		metaItems.put("existingItem", existingItem);
+		metaItems.put("incomingItem", incomingItem);
+		
+		List<String> existingItemPropertyValue = new ArrayList<String>();
+		List<String> incomingItemPropertyValue = new ArrayList<String>();
+		
+		existingItemPropertyValue.add("Dilgur");
+		existingItemPropertyValue.add("Edger");
+		existingItemPropertyValue.add("Torrin");
+		
+		Map<String, ElementMeta> result = metaDataComparisonService.getChildElementMeta(metaItems, (Object) existingItemPropertyValue, (Object) incomingItemPropertyValue);
+		
+		ElementMeta resultedExistingMeta = (ElementMeta) result.get("existingItem");
+		ElementMeta resultedIncomingMeta = (ElementMeta) result.get("incomingItem");
+		
+		Assert.assertNotNull(resultedExistingMeta.getSubElmentMetaList());
+		Assert.assertNull(resultedIncomingMeta);
+		Assert.assertFalse(resultedExistingMeta.equals(resultedIncomingMeta));
+		Assert.assertEquals(3, resultedExistingMeta.getSubElmentMetaList().size());
 		
 	}
 	
