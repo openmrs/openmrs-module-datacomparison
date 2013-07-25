@@ -13,6 +13,8 @@
  */
 package org.openmrs.module.datacomparison;
 
+import java.util.List;
+
 /**
  * This DTO class contains the meta data of a property in 
  * given meta data object in data comparison view.
@@ -23,6 +25,7 @@ public class ElementMeta {
 	private int level;
 	private boolean isComplex;
 	private int propertyType;
+	private List<ElementMeta> subElmentMetaList = null;
 	
 	/**
 	 * Set the property value of particular element.
@@ -95,6 +98,24 @@ public class ElementMeta {
 	public int getPropertyType() {
 		return propertyType;
 	}
-
+	
+	/**
+	 * Set the meta list of child elements for a non-simple data type property.
+	 * 
+	 * @param subElmentMetaList The list of ElementMeta objects.
+	 */
+	public void setSubElmentMetaList(List<ElementMeta> subElmentMetaList) {
+	    this.subElmentMetaList = subElmentMetaList;
+    }
+	
+	/**
+	 * Get the meta list of child elements in a non-simple data type property.
+	 * 
+	 * @return List of ElementMeta objects.
+	 */
+	public List<ElementMeta> getSubElmentMetaList() {
+	    return subElmentMetaList;
+    }
+	
 }
 

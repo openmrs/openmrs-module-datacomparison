@@ -14,9 +14,11 @@
 package org.openmrs.module.datacomparison.api;
 
 import java.util.List;
+import java.util.Map;
 
 import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
+import org.openmrs.module.datacomparison.ElementMeta;
 import org.openmrs.module.datacomparison.RowMeta;
 
 /**
@@ -43,5 +45,15 @@ public interface MetaDataComparisonService extends OpenmrsService {
 	 * @throws IllegalAccessException
 	 */
 	List<RowMeta> getRowMetaList(Object existingItem, Object incomingItem) throws APIException, IllegalArgumentException, IllegalAccessException;
+	
+	/**
+	 * Get meta data for the child elements of complex data types.
+	 * 
+	 * @param metaItems the Map of ElementMeta objects represent existing and incoming property meta data
+	 * @param existingItemPropertyValue Object the value of the existing item property
+	 * @param incomingItemPropertyValue Object the value of the incoming item property
+	 * @return Map of ElementMeta objects represent existing and incoming property meta data
+	 */
+	Map<String, ElementMeta> getChildElementMeta(Map<String, ElementMeta> metaItems, Object existingItemPropertyValue, Object incomingItemPropertyValue) throws APIException;
 	
 }

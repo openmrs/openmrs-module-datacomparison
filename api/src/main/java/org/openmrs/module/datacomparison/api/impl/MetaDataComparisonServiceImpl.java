@@ -102,6 +102,10 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 			metaItems.put("existingItem", existingItemMeta);
 			metaItems.put("incomingItem", incomingItemMeta);
 			
+			if (existingItemMeta.getIsComplex() || incomingItemMeta.getIsComplex()) {
+				metaItems = getChildElementMeta(metaItems, existingItemFieldValue, incomingItemFieldValue);
+			}
+			
 			rowMeta.setPropertyName(fields.get(i).getName());
 			rowMeta.setMetaItems(metaItems);
 			rowMeta.setLevel(0);
@@ -111,6 +115,15 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 		}
 		
 		return rowMetaList;
+		
+	}
+	
+	/**
+	 * @see org.openmrs.module.datacomparison.api.MetaDataComparisonService#getChildElementMeta(java.util.Map<String, ElementMeta>, java.lang.Object, java.lang.Object)
+	 */
+	public Map<String, ElementMeta> getChildElementMeta(Map<String, ElementMeta> metaItems, Object existingItemPropertyValue, Object incomingItemPropertyValue) throws APIException {
+		
+		return metaItems;
 		
 	}
 	
