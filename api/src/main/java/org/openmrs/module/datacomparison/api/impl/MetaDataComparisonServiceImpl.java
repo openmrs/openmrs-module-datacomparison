@@ -14,8 +14,11 @@
 package org.openmrs.module.datacomparison.api.impl;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -40,10 +43,12 @@ import org.openmrs.util.Reflect;
 public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements MetaDataComparisonService {
 	
 	/**
+	 * @throws SecurityException 
+	 * @throws NoSuchFieldException 
 	 * @see org.openmrs.module.datacomparison.api.MetaDataComparisonService#getRowMetaList(java.lang.Object, java.lang.Object)
 	 */
 	@SuppressWarnings("rawtypes")
-    public List<RowMeta> getRowMetaList(Object existingItem, Object incomingItem) throws APIException, IllegalArgumentException, IllegalAccessException {
+    public List<RowMeta> getRowMetaList(Object existingItem, Object incomingItem) throws APIException, IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException {
 		
 		List<RowMeta> rowMetaList = new ArrayList<RowMeta>();
 		
@@ -103,7 +108,7 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 			metaItems.put("incomingItem", incomingItemMeta);
 			
 			if (existingItemMeta.getIsComplex() || incomingItemMeta.getIsComplex()) {
-				metaItems = getChildElementMeta(metaItems, existingItemFieldValue, incomingItemFieldValue);
+				metaItems = getChildElementMeta(metaItems, existingItemFieldValue, incomingItemFieldValue, c, fields.get(i).getName());
 			}
 			
 			rowMeta.setPropertyName(fields.get(i).getName());
@@ -119,9 +124,85 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 	}
 	
 	/**
-	 * @see org.openmrs.module.datacomparison.api.MetaDataComparisonService#getChildElementMeta(java.util.Map<String, ElementMeta>, java.lang.Object, java.lang.Object)
+	 * @see org.openmrs.module.datacomparison.api.MetaDataComparisonService#getChildElementMeta(
+	 * 		java.util.Map<String, ElementMeta>, java.lang.Object, java.lang.Object, java.lang.Class, java.lang.String)
 	 */
-	public Map<String, ElementMeta> getChildElementMeta(Map<String, ElementMeta> metaItems, Object existingItemPropertyValue, Object incomingItemPropertyValue) throws APIException {
+	public Map<String, ElementMeta> getChildElementMeta(
+		Map<String, ElementMeta> metaItems, Object existingItemPropertyValue, Object incomingItemPropertyValue, Class clazz, String proprtyName
+	) throws APIException, NoSuchFieldException, SecurityException {
+		
+		ElementMeta existingElementMeta = metaItems.get("existingItem");
+		ElementMeta incomingElementMeta = metaItems.get("incomingItem");
+		
+		List<ElementMeta> existingSubElmentMetaList = null;
+		List<ElementMeta> incomingSubElmentMetaList = null;
+		
+		// Both property values are not null
+		if ((existingItemPropertyValue != null) && (incomingItemPropertyValue != null)) {
+			
+			// Collection data type
+			if (metaItems.get("existingItem").getPropertyType() == DataComparisonConsts.COLLECTION_DATA_TYPE) {
+				
+				Collection<?> existingCollectionProperty = (Collection<?>) existingItemPropertyValue;
+				Collection<?> incomingCollectionProperty = (Collection<?>) incomingItemPropertyValue;
+				
+				// Both properties are not empty
+				if ((existingCollectionProperty.size() > 0) && (incomingCollectionProperty.size() > 0)) {
+					
+					// Both collections are equal case
+					if (existingCollectionProperty.containsAll(incomingCollectionProperty)
+						&& incomingCollectionProperty.containsAll(existingCollectionProperty)
+					) {
+						
+						Class genericClass = (Class) ((ParameterizedType) clazz.getDeclaredField(proprtyName).getGenericType()).getActualTypeArguments()[0];
+						
+						if (isSimpleDataType(null, genericClass)) {
+							
+							existingSubElmentMetaList = new ArrayList<ElementMeta>();
+							
+							// Just iterate the items in collection
+							for (Object obj : existingCollectionProperty) {
+								
+								ElementMeta em = new ElementMeta();
+								
+								em.setIsComplex(false);
+								em.setLevel(1);
+								em.setPropertyType(DataComparisonConsts.SIMPLE_DATA_TYPE);
+								em.setPropertyValue(obj.toString());
+								em.setSubElmentMetaList(null);
+								
+								existingSubElmentMetaList.add(em);
+								
+							}
+							
+							// Since both are same
+							existingElementMeta.setSubElmentMetaList(existingSubElmentMetaList);
+							incomingElementMeta.setSubElmentMetaList(existingSubElmentMetaList);
+							
+							metaItems.put("existingItem", existingElementMeta);
+							metaItems.put("incomingItem", incomingElementMeta);
+							
+						}
+						
+					} else {
+						
+						int max = Math.max(((Collection<?>) existingItemPropertyValue).size(), ((Collection<?>) incomingItemPropertyValue).size());
+						
+					}
+					
+				} else {
+					
+				}
+				
+			} else if (metaItems.get("existingItem").getPropertyType() == DataComparisonConsts.MAP_DATA_TYPE) {
+				
+			} else if (metaItems.get("existingItem").getPropertyType() == DataComparisonConsts.OPENMRS_DATA_TYPE) {
+				
+			}
+			
+		} else { // One property value can be null
+			
+		}
 		
 		return metaItems;
 		
@@ -137,7 +218,7 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 	 */
 	private ElementMeta getElementMetaObjectAfterSetProperties(ElementMeta elementMetaItem, Object data) {
 		
-		if (isSimpleDataType(data)) {
+		if (isSimpleDataType(data, null)) {
         	
 			elementMetaItem.setIsComplex(false);
 			elementMetaItem.setPropertyType(DataComparisonConsts.SIMPLE_DATA_TYPE);
@@ -148,21 +229,21 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
         	// Dummy code for testing
         	elementMetaItem.setPropertyType(DataComparisonConsts.COLLECTION_DATA_TYPE);
         	elementMetaItem.setPropertyValue("Collection Data Type");
-        	elementMetaItem.setIsComplex(false);
+        	elementMetaItem.setIsComplex(true);
         	
-        } else if (isMap(data)) {
+        } else if (isMap(data, null)) {
         	
         	// Dummy code for testing
         	elementMetaItem.setPropertyType(DataComparisonConsts.MAP_DATA_TYPE);
         	elementMetaItem.setPropertyValue("Map Data Type");
-        	elementMetaItem.setIsComplex(false);
+        	elementMetaItem.setIsComplex(true);
         	
-        } else if (isOpenMrsObject(data)) {
+        } else if (isOpenMrsObject(data, null)) {
         	
         	// Dummy code for testing
         	elementMetaItem.setPropertyType(DataComparisonConsts.OPENMRS_DATA_TYPE);
         	elementMetaItem.setPropertyValue("OpenMRS object");
-        	elementMetaItem.setIsComplex(false);
+        	elementMetaItem.setIsComplex(true);
         	
         } else {
         	
@@ -184,20 +265,30 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 	 * @param data the object property value
 	 * @return boolean
 	 */
-	private boolean isSimpleDataType(Object data) {
+	private boolean isSimpleDataType(Object data, Class c) {
 		
-		return data.getClass().isPrimitive() ||
-			data.getClass() == java.lang.Long.class ||
-			data.getClass() == java.lang.String.class ||
-			data.getClass() == java.lang.Integer.class ||
-			data.getClass() == java.lang.Boolean.class ||
-			data.getClass() == java.lang.Float.class ||
-			data.getClass() == java.lang.Double.class ||
-    		data.getClass() == java.lang.Byte.class ||
-			data.getClass() == java.lang.Character.class ||
-			data.getClass() == java.lang.Short.class ||
-    		data.getClass() == java.util.Date.class ||
-			data.getClass() == java.sql.Timestamp.class;
+		Class clazz;
+		
+		if (data != null) {
+			clazz = data.getClass();
+		} else if (c != null) {
+			clazz = c;
+		} else {
+			return false;
+		}
+		
+		return clazz.isPrimitive() ||
+			clazz == java.lang.Long.class ||
+			clazz == java.lang.String.class ||
+			clazz == java.lang.Integer.class ||
+			clazz == java.lang.Boolean.class ||
+			clazz == java.lang.Float.class ||
+			clazz == java.lang.Double.class ||
+			clazz == java.lang.Byte.class ||
+			clazz == java.lang.Character.class ||
+			clazz == java.lang.Short.class ||
+			clazz == java.util.Date.class ||
+			clazz == java.sql.Timestamp.class;
 		
 	}
 	
@@ -207,8 +298,20 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 	 * @param data the Object to check
 	 * @return boolean
 	 */
-	private boolean isOpenMrsObject(Object data) {
-		return OpenmrsObject.class.isAssignableFrom(data.getClass());
+	private boolean isOpenMrsObject(Object data, Class c) {
+		
+		Class clazz;
+		
+		if (data != null) {
+			clazz = data.getClass();
+		} else if (c != null) {
+			clazz = c;
+		} else {
+			return false;
+		}
+		
+		return OpenmrsObject.class.isAssignableFrom(clazz);
+		
 	}
 	
 	/**
@@ -217,8 +320,20 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 	 * @param data the Object to check
 	 * @return boolean
 	 */
-	private boolean isMap(Object data) {
-		return Map.class.isAssignableFrom(data.getClass());
+	private boolean isMap(Object data, Class c) {
+		
+		Class clazz;
+		
+		if (data != null) {
+			clazz = data.getClass();
+		} else if (c != null) {
+			clazz = c;
+		} else {
+			return false;
+		}
+		
+		return Map.class.isAssignableFrom(clazz);
+		
 	}
 	
 }

@@ -13,6 +13,7 @@
  */
 package org.openmrs.module.datacomparison.web.controller;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
@@ -68,17 +69,25 @@ public class DataComparisonModuleFormController{
         incomingItem.setSimpleFloat(13.5f);
         incomingItem.setSimpleDate(Calendar.getInstance().getTime());
         
-        Context.addProxyPrivilege("View Patients");
+        List<String> strList = new ArrayList<String>();
+        strList.add("A");
+        strList.add("B");
+        strList.add("C");
+        
+        existingItem.setStrList(strList);
+        incomingItem.setStrList(strList);
+        
+        /*Context.addProxyPrivilege("View Patients");
     	Patient existingPatient = Context.getPatientService().getPatient(101);
     	Patient incomingPatient = Context.getPatientService().getPatient(105);
-    	Context.removeProxyPrivilege("View Patients");
+    	Context.removeProxyPrivilege("View Patients");*/
     	
     	if ((existingItem != null) && (incomingItem != null)) {
     		
     		org.openmrs.module.datacomparison.api.MetaDataComparisonService co = Context.getService(org.openmrs.module.datacomparison.api.MetaDataComparisonService.class);
-            List<RowMeta> rowMetaList = co.getRowMetaList((Object) existingPatient, (Object) incomingPatient);
+            List<RowMeta> rowMetaList = co.getRowMetaList((Object) existingItem, (Object) incomingItem);
             
-            model.addAttribute("className", existingPatient.getClass().getName());
+            model.addAttribute("className", existingItem.getClass().getName());
             model.addAttribute("rowMetaList", rowMetaList);
     		
     	}

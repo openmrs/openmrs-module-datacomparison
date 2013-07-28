@@ -14,6 +14,7 @@
 package org.openmrs.module.datacomparison;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * This DTO class is used to represent an objects with simple properties. 
@@ -25,6 +26,7 @@ public class SimpleObject {
 	private Boolean simpleBoolean;
 	private Date simpleDate;
 	private String simpleString;
+	private List<String> strList = null;
 	
 	/**
 	 * Set integer value.
@@ -115,5 +117,23 @@ public class SimpleObject {
 	public String getSimpleString() {
 		return simpleString;
 	}
+	
+	/**
+	 * Set string list value.
+	 * 
+	 * @param strList The string list to set.
+	 */
+	public void setStrList(List<String> strList) {
+	    this.strList = strList;
+    }
+	
+	/**
+	 * Get string list.
+	 * 
+	 * @return The strList.
+	 */
+	public List<String> getStrList() {
+	    return strList;
+    }
 	
 }

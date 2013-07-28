@@ -23,10 +23,32 @@
 						<td>
 							<img src="${pageContext.request.contextPath}${imageSrc}" class="imageClass" />
 							<label class="propertyName">${rowMeta.propertyName}</label>&nbsp;:&nbsp;<label class="propertyValue">${rowMeta.metaItems['existingItem'].propertyValue}</label>
+							
+							<c:choose>
+								<c:when test="${rowMeta.metaItems['existingItem'].subElmentMetaList != null}">
+									<div>
+										<c:forEach var="subElement" items="${rowMeta.metaItems['existingItem'].subElmentMetaList}" varStatus="stat_1">
+											<span>&nbsp;&nbsp;&nbsp;&nbsp;${subElement.propertyValue}</span><br/>
+										</c:forEach>
+									</div>
+								</c:when>
+							</c:choose>
+							 
 						</td>
 						<td>
 							<img src="${pageContext.request.contextPath}${imageSrc}" class="imageClass" />
 							<label class="propertyName">${rowMeta.propertyName}</label>&nbsp;:&nbsp;<label class="propertyValue">${rowMeta.metaItems['incomingItem'].propertyValue}</label>
+							
+							<c:choose>
+								<c:when test="${rowMeta.metaItems['incomingItem'].subElmentMetaList != null}">
+									<div>
+	 									<c:forEach var="subElement" items="${rowMeta.metaItems['incomingItem'].subElmentMetaList}" varStatus="stat_2">
+											<span>&nbsp;&nbsp;&nbsp;&nbsp;${subElement.propertyValue}</span><br/>
+										</c:forEach>
+									</div>
+								</c:when>
+							</c:choose>
+							 
 						</td>
 					</tr>
 				</c:forEach>

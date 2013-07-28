@@ -43,8 +43,10 @@ public interface MetaDataComparisonService extends OpenmrsService {
 	 * @throws APIException
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
+	 * @throws NoSuchFieldException
+	 * @throws SecurityException
 	 */
-	List<RowMeta> getRowMetaList(Object existingItem, Object incomingItem) throws APIException, IllegalArgumentException, IllegalAccessException;
+	List<RowMeta> getRowMetaList(Object existingItem, Object incomingItem) throws APIException, IllegalArgumentException, IllegalAccessException, NoSuchFieldException, SecurityException;
 	
 	/**
 	 * Get meta data for the child elements of complex data types.
@@ -52,8 +54,13 @@ public interface MetaDataComparisonService extends OpenmrsService {
 	 * @param metaItems the Map of ElementMeta objects represent existing and incoming property meta data
 	 * @param existingItemPropertyValue Object the value of the existing item property
 	 * @param incomingItemPropertyValue Object the value of the incoming item property
+	 * @param clazz the class type of the property
+	 * @param proprtyName the name of the property
 	 * @return Map of ElementMeta objects represent existing and incoming property meta data
+	 * @throws APIException
+	 * @throws SecurityException 
+	 * @throws NoSuchFieldException 
 	 */
-	Map<String, ElementMeta> getChildElementMeta(Map<String, ElementMeta> metaItems, Object existingItemPropertyValue, Object incomingItemPropertyValue) throws APIException;
+	Map<String, ElementMeta> getChildElementMeta(Map<String, ElementMeta> metaItems, Object existingItemPropertyValue, Object incomingItemPropertyValue, Class clazz, String proprtyName) throws APIException, NoSuchFieldException, SecurityException;
 	
 }
