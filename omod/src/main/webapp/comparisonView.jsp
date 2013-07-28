@@ -28,7 +28,11 @@
 								<c:when test="${rowMeta.metaItems['existingItem'].subElmentMetaList != null}">
 									<div>
 										<c:forEach var="subElement" items="${rowMeta.metaItems['existingItem'].subElmentMetaList}" varStatus="stat_1">
-											<span>&nbsp;&nbsp;&nbsp;&nbsp;${subElement.propertyValue}</span><br/>
+											<c:set var="imageSrc" value="${(subElement.isSimilar eq true) ? '/moduleResources/datacomparison/images/icon-marble-green.gif' : '/moduleResources/datacomparison/images/icon-marble-red.gif'}" />
+											<span>
+												&nbsp;&nbsp;&nbsp;&nbsp;<img src="${pageContext.request.contextPath}${imageSrc}" class="imageSrc" />${subElement.propertyValue}
+											</span>
+											<br/>
 										</c:forEach>
 									</div>
 								</c:when>
@@ -43,7 +47,11 @@
 								<c:when test="${rowMeta.metaItems['incomingItem'].subElmentMetaList != null}">
 									<div>
 	 									<c:forEach var="subElement" items="${rowMeta.metaItems['incomingItem'].subElmentMetaList}" varStatus="stat_2">
-											<span>&nbsp;&nbsp;&nbsp;&nbsp;${subElement.propertyValue}</span><br/>
+	 										<c:set var="imageSrc" value="${(subElement.isSimilar eq true) ? '/moduleResources/datacomparison/images/icon-marble-green.gif' : '/moduleResources/datacomparison/images/icon-marble-red.gif'}" />
+											<span>
+												&nbsp;&nbsp;&nbsp;&nbsp;<img src="${pageContext.request.contextPath}${imageSrc}" class="imageSrc" />${subElement.propertyValue}
+											</span>
+											<br/>
 										</c:forEach>
 									</div>
 								</c:when>

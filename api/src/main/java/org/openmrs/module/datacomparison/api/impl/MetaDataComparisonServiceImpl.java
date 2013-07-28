@@ -17,6 +17,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -106,13 +107,16 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 			
 			metaItems.put("existingItem", existingItemMeta);
 			metaItems.put("incomingItem", incomingItemMeta);
+			rowMeta.setMetaItems(metaItems);
 			
 			if (existingItemMeta.getIsComplex() || incomingItemMeta.getIsComplex()) {
-				metaItems = getChildElementMeta(metaItems, existingItemFieldValue, incomingItemFieldValue, c, fields.get(i).getName());
+				rowMeta = getChildElementMeta(rowMeta, existingItemFieldValue, incomingItemFieldValue, c, fields.get(i).getName());
+				
+			} else {
+				
 			}
 			
 			rowMeta.setPropertyName(fields.get(i).getName());
-			rowMeta.setMetaItems(metaItems);
 			rowMeta.setLevel(0);
 			
 			rowMetaList.add(rowMeta);
@@ -127,12 +131,14 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 	 * @see org.openmrs.module.datacomparison.api.MetaDataComparisonService#getChildElementMeta(
 	 * 		java.util.Map<String, ElementMeta>, java.lang.Object, java.lang.Object, java.lang.Class, java.lang.String)
 	 */
-	public Map<String, ElementMeta> getChildElementMeta(
-		Map<String, ElementMeta> metaItems, Object existingItemPropertyValue, Object incomingItemPropertyValue, Class clazz, String proprtyName
+	public RowMeta getChildElementMeta(
+		RowMeta rowMeta, Object existingItemPropertyValue, Object incomingItemPropertyValue, Class clazz, String proprtyName
 	) throws APIException, NoSuchFieldException, SecurityException {
 		
-		ElementMeta existingElementMeta = metaItems.get("existingItem");
-		ElementMeta incomingElementMeta = metaItems.get("incomingItem");
+		Map<String, ElementMeta> metaItems = rowMeta.getMetaItems();
+		
+		ElementMeta existingElementMeta = rowMeta.getMetaItems().get("existingItem");
+		ElementMeta incomingElementMeta = rowMeta.getMetaItems().get("incomingItem");
 		
 		List<ElementMeta> existingSubElmentMetaList = null;
 		List<ElementMeta> incomingSubElmentMetaList = null;
@@ -141,10 +147,12 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 		if ((existingItemPropertyValue != null) && (incomingItemPropertyValue != null)) {
 			
 			// Collection data type
-			if (metaItems.get("existingItem").getPropertyType() == DataComparisonConsts.COLLECTION_DATA_TYPE) {
+			if (existingElementMeta.getPropertyType() == DataComparisonConsts.COLLECTION_DATA_TYPE) {
 				
 				Collection<?> existingCollectionProperty = (Collection<?>) existingItemPropertyValue;
 				Collection<?> incomingCollectionProperty = (Collection<?>) incomingItemPropertyValue;
+				
+				Class genericClass = (Class) ((ParameterizedType) clazz.getDeclaredField(proprtyName).getGenericType()).getActualTypeArguments()[0];
 				
 				// Both properties are not empty
 				if ((existingCollectionProperty.size() > 0) && (incomingCollectionProperty.size() > 0)) {
@@ -153,8 +161,6 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 					if (existingCollectionProperty.containsAll(incomingCollectionProperty)
 						&& incomingCollectionProperty.containsAll(existingCollectionProperty)
 					) {
-						
-						Class genericClass = (Class) ((ParameterizedType) clazz.getDeclaredField(proprtyName).getGenericType()).getActualTypeArguments()[0];
 						
 						if (isSimpleDataType(null, genericClass)) {
 							
@@ -170,6 +176,7 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 								em.setPropertyType(DataComparisonConsts.SIMPLE_DATA_TYPE);
 								em.setPropertyValue(obj.toString());
 								em.setSubElmentMetaList(null);
+								em.setIsSimilar(true);
 								
 								existingSubElmentMetaList.add(em);
 								
@@ -182,11 +189,95 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 							metaItems.put("existingItem", existingElementMeta);
 							metaItems.put("incomingItem", incomingElementMeta);
 							
+							rowMeta.setMetaItems(metaItems);
+							rowMeta.setIsSimilar(true);
+							
 						}
 						
 					} else {
 						
-						int max = Math.max(((Collection<?>) existingItemPropertyValue).size(), ((Collection<?>) incomingItemPropertyValue).size());
+						// Collections are not equal in this case
+						
+						if (isSimpleDataType(null, genericClass)) {
+							
+							List<String> similarDataList = new ArrayList<String>();
+							List<ElementMeta> simiarElementMetaList = new ArrayList<ElementMeta>();
+							List<ElementMeta> differentListInExistingProperty = new ArrayList<ElementMeta>();
+							List<ElementMeta> differentListInIncomingProperty = new ArrayList<ElementMeta>();
+							ElementMeta em;
+							
+							for (Object obj : incomingCollectionProperty) {
+								
+								if (existingCollectionProperty.contains(obj)) {
+									
+									similarDataList.add(obj.toString());
+									
+									em = new ElementMeta();
+									em.setIsComplex(false);
+									em.setLevel(1);
+									em.setPropertyType(DataComparisonConsts.SIMPLE_DATA_TYPE);
+									em.setPropertyValue(obj.toString());
+									em.setSubElmentMetaList(null);
+									em.setIsSimilar(true);
+									
+									simiarElementMetaList.add(em);
+									
+								}
+								
+							}
+							
+							existingSubElmentMetaList = new ArrayList<ElementMeta>();
+							incomingSubElmentMetaList = new ArrayList<ElementMeta>();
+							
+							// Add similar items first to existingSubElmentMetaList and incomingSubElmentMetaList
+							existingSubElmentMetaList.addAll(simiarElementMetaList);
+							incomingSubElmentMetaList.addAll(simiarElementMetaList);
+							
+							// Remove similar items from the existingCollectionProperty and incomingCollectionProperty
+							existingCollectionProperty.removeAll(similarDataList);
+							incomingCollectionProperty.removeAll(similarDataList);
+							
+							// Add remaining items for the existingSubElmentMetaList
+							for (Object obj : existingCollectionProperty) {
+								
+								em = new ElementMeta();
+								em.setIsComplex(false);
+								em.setLevel(1);
+								em.setPropertyType(DataComparisonConsts.SIMPLE_DATA_TYPE);
+								em.setPropertyValue(obj.toString());
+								em.setSubElmentMetaList(null);
+								em.setIsSimilar(false);
+								
+								existingSubElmentMetaList.add(em);
+								
+							}
+							
+							// Add remaining items for the incomingSubElmentMetaList
+							for (Object obj : incomingCollectionProperty) {
+								
+								em = new ElementMeta();
+								em.setIsComplex(false);
+								em.setLevel(1);
+								em.setPropertyType(DataComparisonConsts.SIMPLE_DATA_TYPE);
+								em.setPropertyValue(obj.toString());
+								em.setSubElmentMetaList(null);
+								em.setIsSimilar(false);
+								
+								incomingSubElmentMetaList.add(em);
+								
+							}
+							
+							// Since both are same
+							existingElementMeta.setSubElmentMetaList(existingSubElmentMetaList);
+							incomingElementMeta.setSubElmentMetaList(incomingSubElmentMetaList);
+							
+							metaItems.put("existingItem", existingElementMeta);
+							metaItems.put("incomingItem", incomingElementMeta);
+							
+							rowMeta.setMetaItems(metaItems);
+							rowMeta.setIsSimilar(false);
+							
+						}
 						
 					}
 					
@@ -194,9 +285,9 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 					
 				}
 				
-			} else if (metaItems.get("existingItem").getPropertyType() == DataComparisonConsts.MAP_DATA_TYPE) {
+			} else if (existingElementMeta.getPropertyType() == DataComparisonConsts.MAP_DATA_TYPE) {
 				
-			} else if (metaItems.get("existingItem").getPropertyType() == DataComparisonConsts.OPENMRS_DATA_TYPE) {
+			} else if (existingElementMeta.getPropertyType() == DataComparisonConsts.OPENMRS_DATA_TYPE) {
 				
 			}
 			
@@ -204,7 +295,7 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 			
 		}
 		
-		return metaItems;
+		return rowMeta;
 		
 	}
 	
@@ -228,7 +319,7 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
         	
         	// Dummy code for testing
         	elementMetaItem.setPropertyType(DataComparisonConsts.COLLECTION_DATA_TYPE);
-        	elementMetaItem.setPropertyValue("Collection Data Type");
+        	elementMetaItem.setPropertyValue("");
         	elementMetaItem.setIsComplex(true);
         	
         } else if (isMap(data, null)) {

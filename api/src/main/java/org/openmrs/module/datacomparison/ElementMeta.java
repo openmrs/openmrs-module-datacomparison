@@ -25,6 +25,7 @@ public class ElementMeta {
 	private int level;
 	private boolean isComplex;
 	private int propertyType;
+	private boolean isSimilar;
 	private List<ElementMeta> subElmentMetaList = null;
 	
 	/**
@@ -115,6 +116,24 @@ public class ElementMeta {
 	 */
 	public List<ElementMeta> getSubElmentMetaList() {
 	    return subElmentMetaList;
+    }
+	
+	/**
+	 * Set the similarity status of the element, comparing relevant child of collection type properties.
+	 * 
+	 * @param isSimilar The boolean value to set.
+	 */
+	public void setIsSimilar(boolean isSimilar) {
+	    this.isSimilar = isSimilar;
+    }
+	
+	/**
+	 * Get the similarity status of the element, comparing relevant child of collection type properties.
+	 * 
+	 * @return The isSimilar.
+	 */
+	public boolean getIsSimilar() {
+	    return isSimilar;
     }
 	
 }

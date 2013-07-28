@@ -61,6 +61,6 @@ public interface MetaDataComparisonService extends OpenmrsService {
 	 * @throws SecurityException 
 	 * @throws NoSuchFieldException 
 	 */
-	Map<String, ElementMeta> getChildElementMeta(Map<String, ElementMeta> metaItems, Object existingItemPropertyValue, Object incomingItemPropertyValue, Class clazz, String proprtyName) throws APIException, NoSuchFieldException, SecurityException;
+	RowMeta getChildElementMeta(RowMeta rowMeta, Object existingItemPropertyValue, Object incomingItemPropertyValue, Class clazz, String proprtyName) throws APIException, NoSuchFieldException, SecurityException;
 	
 }

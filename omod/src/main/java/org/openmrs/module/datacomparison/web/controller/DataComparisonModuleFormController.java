@@ -74,8 +74,15 @@ public class DataComparisonModuleFormController{
         strList.add("B");
         strList.add("C");
         
+        List<String> strListB = new ArrayList<String>();
+        strListB.add("G");
+        strListB.add("M");
+        strListB.add("C");
+        strListB.add("B");
+        strListB.add("P");
+        
         existingItem.setStrList(strList);
-        incomingItem.setStrList(strList);
+        incomingItem.setStrList(strListB);
         
         /*Context.addProxyPrivilege("View Patients");
     	Patient existingPatient = Context.getPatientService().getPatient(101);
