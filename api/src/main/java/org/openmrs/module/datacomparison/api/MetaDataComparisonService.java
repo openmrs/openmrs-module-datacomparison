@@ -13,12 +13,11 @@
  */
 package org.openmrs.module.datacomparison.api;
 
+import java.lang.reflect.Field;
 import java.util.List;
-import java.util.Map;
 
 import org.openmrs.api.APIException;
 import org.openmrs.api.OpenmrsService;
-import org.openmrs.module.datacomparison.ElementMeta;
 import org.openmrs.module.datacomparison.RowMeta;
 
 /**
@@ -60,7 +59,9 @@ public interface MetaDataComparisonService extends OpenmrsService {
 	 * @throws APIException
 	 * @throws SecurityException 
 	 * @throws NoSuchFieldException 
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
 	 */
-	RowMeta getChildElementMeta(RowMeta rowMeta, Object existingItemPropertyValue, Object incomingItemPropertyValue, Class clazz, String proprtyName) throws APIException, NoSuchFieldException, SecurityException;
+	RowMeta getChildElementMeta(RowMeta rowMeta, Object existingItemPropertyValue, Object incomingItemPropertyValue, Field field) throws APIException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException;
 	
 }

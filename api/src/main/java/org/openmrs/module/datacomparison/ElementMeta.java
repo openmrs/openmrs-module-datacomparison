@@ -21,12 +21,31 @@ import java.util.List;
  */
 public class ElementMeta {
 
+	private String propertyName = null;
 	private String propertyValue;
 	private int level;
 	private boolean isComplex;
 	private int propertyType;
 	private boolean isSimilar;
 	private List<ElementMeta> subElmentMetaList = null;
+	
+	/**
+	 * Set the property name, for child of complex type properties.
+	 * 
+	 * @param propertyName The String value to set.
+	 */
+	public void setPropertyName(String propertyName) {
+	    this.propertyName = propertyName;
+    }
+	
+	/**
+	 * Get the property name, for child of complex type properties.
+	 * 
+	 * @return The propertyName.
+	 */
+	public String getPropertyName() {
+	    return propertyName;
+    }
 	
 	/**
 	 * Set the property value of particular element.

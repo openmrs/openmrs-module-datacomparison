@@ -17,9 +17,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -110,7 +108,7 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 			rowMeta.setMetaItems(metaItems);
 			
 			if (existingItemMeta.getIsComplex() || incomingItemMeta.getIsComplex()) {
-				rowMeta = getChildElementMeta(rowMeta, existingItemFieldValue, incomingItemFieldValue, c, fields.get(i).getName());
+				rowMeta = getChildElementMeta(rowMeta, existingItemFieldValue, incomingItemFieldValue, fields.get(i));
 				
 			} else {
 				
@@ -132,8 +130,8 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 	 * 		java.util.Map<String, ElementMeta>, java.lang.Object, java.lang.Object, java.lang.Class, java.lang.String)
 	 */
 	public RowMeta getChildElementMeta(
-		RowMeta rowMeta, Object existingItemPropertyValue, Object incomingItemPropertyValue, Class clazz, String proprtyName
-	) throws APIException, NoSuchFieldException, SecurityException {
+		RowMeta rowMeta, Object existingItemPropertyValue, Object incomingItemPropertyValue, Field field
+	) throws APIException, NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		
 		Map<String, ElementMeta> metaItems = rowMeta.getMetaItems();
 		
@@ -152,7 +150,7 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 				Collection<?> existingCollectionProperty = (Collection<?>) existingItemPropertyValue;
 				Collection<?> incomingCollectionProperty = (Collection<?>) incomingItemPropertyValue;
 				
-				Class genericClass = (Class) ((ParameterizedType) clazz.getDeclaredField(proprtyName).getGenericType()).getActualTypeArguments()[0];
+				Class genericClass = (Class) ((ParameterizedType) field.getGenericType()).getActualTypeArguments()[0];
 				
 				// Both properties are not empty
 				if ((existingCollectionProperty.size() > 0) && (incomingCollectionProperty.size() > 0)) {
@@ -162,6 +160,7 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 						&& incomingCollectionProperty.containsAll(existingCollectionProperty)
 					) {
 						
+						// If elements of the collection are simple data
 						if (isSimpleDataType(null, genericClass)) {
 							
 							existingSubElmentMetaList = new ArrayList<ElementMeta>();
@@ -192,18 +191,23 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 							rowMeta.setMetaItems(metaItems);
 							rowMeta.setIsSimilar(true);
 							
+						} else if (isOpenMrsObject(null, genericClass)){
+							
+							// If elements of the collection are OpenMRS object type
+							
+							
+							
 						}
 						
 					} else {
 						
 						// Collections are not equal in this case
 						
+						// If elements of the collection are simple data
 						if (isSimpleDataType(null, genericClass)) {
 							
 							List<String> similarDataList = new ArrayList<String>();
 							List<ElementMeta> simiarElementMetaList = new ArrayList<ElementMeta>();
-							List<ElementMeta> differentListInExistingProperty = new ArrayList<ElementMeta>();
-							List<ElementMeta> differentListInIncomingProperty = new ArrayList<ElementMeta>();
 							ElementMeta em;
 							
 							for (Object obj : incomingCollectionProperty) {
@@ -277,6 +281,10 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 							rowMeta.setMetaItems(metaItems);
 							rowMeta.setIsSimilar(false);
 							
+						} else if (isOpenMrsObject(null, genericClass)) {
+							
+							// If elements of the collection are OpenMRS object type
+							
 						}
 						
 					}
@@ -288,6 +296,131 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 			} else if (existingElementMeta.getPropertyType() == DataComparisonConsts.MAP_DATA_TYPE) {
 				
 			} else if (existingElementMeta.getPropertyType() == DataComparisonConsts.OPENMRS_DATA_TYPE) {
+				
+				// OpenMRS object type property
+				
+				Class childClass = existingItemPropertyValue.getClass();
+				List<Field> childClassFields = Reflect.getAllFields(childClass);
+				ElementMeta existingChildElementMeta;
+				ElementMeta incomingChildElementMeta;
+				Collection<?> existingChildCollectionProperty;
+				Collection<?> incomingChildCollectionProperty;
+				
+				if (existingItemPropertyValue.equals(incomingItemPropertyValue)) {
+					rowMeta.setIsSimilar(true);
+				} else {
+					rowMeta.setIsSimilar(false);
+				}
+				
+				existingSubElmentMetaList = new ArrayList<ElementMeta>();
+				incomingSubElmentMetaList = new ArrayList<ElementMeta>();
+				
+				for (int i=0; i<childClassFields.size(); i++) {
+					
+					childClassFields.get(i).setAccessible(true);
+					
+					Object existingChildFieldValue = childClassFields.get(i).get(existingItemPropertyValue);
+					Object incomingChildFieldValue = childClassFields.get(i).get(incomingItemPropertyValue);
+					
+					existingChildElementMeta = new ElementMeta();
+					existingChildElementMeta.setPropertyName(childClassFields.get(i).getName());
+					
+					if (existingChildFieldValue != null) {
+						
+						existingChildElementMeta = getElementMetaObjectAfterSetProperties(existingChildElementMeta, existingChildFieldValue);
+		                
+		            } else {
+		            	existingChildElementMeta.setIsComplex(false);
+		            	existingChildElementMeta.setPropertyType(DataComparisonConsts.SIMPLE_DATA_TYPE);
+		            	existingChildElementMeta.setPropertyValue(DataComparisonConsts.NULL);
+		            }
+					
+					incomingChildElementMeta = new ElementMeta();
+					incomingChildElementMeta.setPropertyName(childClassFields.get(i).getName());
+					
+					if (incomingChildFieldValue != null) {
+						
+						incomingChildElementMeta = getElementMetaObjectAfterSetProperties(incomingChildElementMeta, incomingChildFieldValue);
+						
+					} else {
+						incomingChildElementMeta.setIsComplex(false);
+						incomingChildElementMeta.setPropertyType(DataComparisonConsts.SIMPLE_DATA_TYPE);
+						incomingChildElementMeta.setPropertyValue(DataComparisonConsts.NULL);
+					}
+					
+					if ((existingChildFieldValue != null) && (incomingChildFieldValue != null)) {
+						if (existingChildFieldValue.equals(incomingChildFieldValue)) {
+							existingChildElementMeta.setIsSimilar(true);
+							incomingChildElementMeta.setIsSimilar(true);
+		                } else {
+		                	existingChildElementMeta.setIsSimilar(false);
+		                	incomingChildElementMeta.setIsSimilar(false);
+		                }
+					} else if ((existingChildFieldValue == null) && (incomingChildFieldValue == null)) {
+						existingChildElementMeta.setIsSimilar(true);
+						incomingChildElementMeta.setIsSimilar(true);
+					} else {
+						existingChildElementMeta.setIsSimilar(false);
+						incomingChildElementMeta.setIsSimilar(false);
+					}
+					
+					if (existingChildElementMeta.getIsComplex() || incomingChildElementMeta.getIsComplex()) {
+						
+						if (((existingChildFieldValue != null) && (incomingChildFieldValue != null))
+							&& (existingElementMeta.getPropertyType() == DataComparisonConsts.COLLECTION_DATA_TYPE)
+						) {
+							
+							existingChildCollectionProperty = (Collection<?>) existingItemPropertyValue;
+							incomingChildCollectionProperty = (Collection<?>) incomingItemPropertyValue;
+							
+							if (existingChildCollectionProperty.containsAll(incomingChildCollectionProperty)
+								&& incomingChildCollectionProperty.containsAll(existingChildCollectionProperty)
+							) {
+								existingChildElementMeta.setIsSimilar(true);
+								incomingChildElementMeta.setIsSimilar(true);
+							} else {
+								existingChildElementMeta.setIsSimilar(false);
+								incomingChildElementMeta.setIsSimilar(false);
+							}
+							
+						} else if (((existingChildFieldValue != null) && (incomingChildFieldValue != null))
+							&& (existingElementMeta.getPropertyType() == DataComparisonConsts.OPENMRS_DATA_TYPE)
+						) {
+							
+							if (existingChildFieldValue.equals(incomingChildFieldValue)) {
+								existingChildElementMeta.setIsSimilar(true);
+								incomingChildElementMeta.setIsSimilar(true);
+							} else {
+								existingChildElementMeta.setIsSimilar(false);
+								incomingChildElementMeta.setIsSimilar(false);
+							}
+							
+						} else if (((existingChildFieldValue != null) && (incomingChildFieldValue != null))
+							&& (existingElementMeta.getPropertyType() == DataComparisonConsts.MAP_DATA_TYPE)
+						) {
+							
+							
+							
+						}
+						
+						
+						
+						
+						
+					}
+					
+					existingSubElmentMetaList.add(existingChildElementMeta);
+					incomingSubElmentMetaList.add(incomingChildElementMeta);
+					
+					
+				}
+				
+				existingElementMeta.setSubElmentMetaList(existingSubElmentMetaList);
+				incomingElementMeta.setSubElmentMetaList(incomingSubElmentMetaList);
+				
+				metaItems.put("existingItem", existingElementMeta);
+				metaItems.put("incomingItem", incomingElementMeta);
+				rowMeta.setMetaItems(metaItems);
 				
 			}
 			
@@ -317,7 +450,6 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
         	
         } else if (Reflect.isCollection(data)) {
         	
-        	// Dummy code for testing
         	elementMetaItem.setPropertyType(DataComparisonConsts.COLLECTION_DATA_TYPE);
         	elementMetaItem.setPropertyValue("");
         	elementMetaItem.setIsComplex(true);
@@ -331,9 +463,8 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
         	
         } else if (isOpenMrsObject(data, null)) {
         	
-        	// Dummy code for testing
         	elementMetaItem.setPropertyType(DataComparisonConsts.OPENMRS_DATA_TYPE);
-        	elementMetaItem.setPropertyValue("OpenMRS object");
+        	elementMetaItem.setPropertyValue("");
         	elementMetaItem.setIsComplex(true);
         	
         } else {

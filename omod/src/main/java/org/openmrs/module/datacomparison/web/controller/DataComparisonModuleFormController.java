@@ -84,17 +84,17 @@ public class DataComparisonModuleFormController{
         existingItem.setStrList(strList);
         incomingItem.setStrList(strListB);
         
-        /*Context.addProxyPrivilege("View Patients");
+        Context.addProxyPrivilege("View Patients");
     	Patient existingPatient = Context.getPatientService().getPatient(101);
     	Patient incomingPatient = Context.getPatientService().getPatient(105);
-    	Context.removeProxyPrivilege("View Patients");*/
+    	Context.removeProxyPrivilege("View Patients");
     	
-    	if ((existingItem != null) && (incomingItem != null)) {
+    	if ((existingPatient != null) && (incomingPatient != null)) {
     		
     		org.openmrs.module.datacomparison.api.MetaDataComparisonService co = Context.getService(org.openmrs.module.datacomparison.api.MetaDataComparisonService.class);
-            List<RowMeta> rowMetaList = co.getRowMetaList((Object) existingItem, (Object) incomingItem);
+            List<RowMeta> rowMetaList = co.getRowMetaList((Object) existingPatient, (Object) incomingPatient);
             
-            model.addAttribute("className", existingItem.getClass().getName());
+            model.addAttribute("className", existingPatient.getClass().getName());
             model.addAttribute("rowMetaList", rowMetaList);
     		
     	}
