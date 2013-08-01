@@ -60,6 +60,11 @@ public class AdminList extends AdministrationSectionExt {
 			Context.getMessageSourceService().getMessage(MESSAGE_CODE_COMPARISON_VIEW_LINK)
 		);
 		
+		map.put(
+			"module/datacomparison/datacomparisonmoduleLink-simpleData.form",
+			"Simple Comparison View"
+		);
+		
 		return map;
 	}
 	

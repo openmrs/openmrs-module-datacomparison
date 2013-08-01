@@ -4,7 +4,23 @@ div#comparisonViewContainer table tr.green label.propertyValue {
 	color : green;
 }
 
+div#comparisonViewContainer table tbody tr td div span.green label.propertyValue {
+	color : green;
+}
+
+div#comparisonViewContainer table tr td div span div span.green label.propertyValue {
+	color : green;
+}
+
 div#comparisonViewContainer table tr.red label.propertyValue {
+	color : red;
+}
+
+div#comparisonViewContainer table tbody tr td div span.red label.propertyValue {
+	color : red;
+}
+
+div#comparisonViewContainer table tr td div span div span.red label.propertyValue {
 	color : red;
 }
 
@@ -21,8 +37,8 @@ div#comparisonViewContainer table #seperatorColumn {
 }
 
 div#comparisonViewContainer table tr .imageClass {
-	height: 7px;
-    width: 7px;
+	height: 15px;
+    width: 15px;
 }
 
 div#comparisonViewContainer table tr td {

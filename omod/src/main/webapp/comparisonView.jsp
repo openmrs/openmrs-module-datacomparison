@@ -73,17 +73,55 @@
 												</c:when>
 											</c:choose>
 											
+											<c:set var="cssClass" value="${(subElement.isSimilar eq true) ? 'green' : 'red'}" />
 											<c:set var="childPropertyName" value="${(subElement.propertyName eq null) ? '' : subElement.propertyName}" />
 											
-											<span>
-												&nbsp;&nbsp;&nbsp;&nbsp;<img src="${pageContext.request.contextPath}${childImageSrc}" class="imageSrc" />
+											<span class="${cssClass}">
+												&nbsp;&nbsp;&nbsp;&nbsp;<img src="${pageContext.request.contextPath}${childImageSrc}" class="imageClass" />
 												<label class="propertyName">${childPropertyName}</label>&nbsp;:&nbsp;<label class="propertyValue">${subElement.propertyValue}</label>
+												
+												
+												<!-- If 2nd level childs are there, render them under the 1st level child element -->
+												<c:choose>
+													<c:when test="${subElement.subElmentMetaList != null}">
+														<div>
+															<c:forEach var="subChildElement" items="${subElement.subElmentMetaList}" varStatus="stat_3">
+															
+																<c:choose>
+																	<c:when test="${subChildElement.propertyType eq 0}">
+																		<c:set var="subChildImageSrc" value="${(subChildElement.isSimilar eq true) ? '/moduleResources/datacomparison/images/icon-marble-green.gif' : '/moduleResources/datacomparison/images/icon-marble-red.gif'}" />
+																	</c:when>
+																	<c:when test="${subChildElement.propertyType eq 1}">
+																		<c:set var="subChildImageSrc" value="${(subChildElement.isSimilar eq true) ? '/moduleResources/datacomparison/images/squareBracket-green.jpg' : '/moduleResources/datacomparison/images/squareBracket-red.jpg'}" />
+																	</c:when>
+																	<c:when test="${subChildElement.propertyType eq 3}">
+																		<c:set var="subChildImageSrc" value="${(subChildElement.isSimilar eq true) ? '/moduleResources/datacomparison/images/curlyBracket-green.jpg' : '/moduleResources/datacomparison/images/curlyBracket-red.jpg'}" />
+																	</c:when>
+																</c:choose>
+																
+																<c:set var="cssClass" value="${(subChildElement.isSimilar eq true) ? 'green' : 'red'}" />
+																<c:set var="subChildPropertyName" value="${(subChildElement.propertyName eq null) ? '' : subChildElement.propertyName}" />
+																
+																<span class="${cssClass}">
+																	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="${pageContext.request.contextPath}${subChildImageSrc}" class="imageClass" />
+																	<label class="propertyName">${subChildPropertyName}</label>&nbsp;:&nbsp;<label class="propertyValue">${subChildElement.propertyValue}</label>
+																</span>
+																<br/>
+																
+															</c:forEach>
+														</div>
+													</c:when>
+												</c:choose>
+												<!-- End of rendering 2nd level childs -->
+												
 											</span>
 											<br/>
+											
 										</c:forEach>
 									</div>
 								</c:when>
 							</c:choose>
+							<!-- End of render childs -->
 							 
 						</td>
 						<td>
@@ -107,11 +145,46 @@
 												</c:when>
 											</c:choose>
 	 										
+	 										<c:set var="cssClass" value="${(subElement.isSimilar eq true) ? 'green' : 'red'}" />
 	 										<c:set var="childPropertyName" value="${(subElement.propertyName eq null) ? '' : subElement.propertyName}" />
 											
-											<span>
-												&nbsp;&nbsp;&nbsp;&nbsp;<img src="${pageContext.request.contextPath}${childImageSrc}" class="imageSrc" />
+											<span class="${cssClass}">
+												&nbsp;&nbsp;&nbsp;&nbsp;<img src="${pageContext.request.contextPath}${childImageSrc}" class="imageClass" />
 												<label class="propertyName">${childPropertyName}</label>&nbsp;:&nbsp;<label class="propertyValue">${subElement.propertyValue}</label>
+												
+												<!-- If 2nd level childs are there, render them under the 1st level child element -->
+												<c:choose>
+													<c:when test="${subElement.subElmentMetaList != null}">
+														<div>
+															<c:forEach var="subChildElement" items="${subElement.subElmentMetaList}" varStatus="stat_4">
+															
+																<c:choose>
+																	<c:when test="${subChildElement.propertyType eq 0}">
+																		<c:set var="subChildImageSrc" value="${(subChildElement.isSimilar eq true) ? '/moduleResources/datacomparison/images/icon-marble-green.gif' : '/moduleResources/datacomparison/images/icon-marble-red.gif'}" />
+																	</c:when>
+																	<c:when test="${subChildElement.propertyType eq 1}">
+																		<c:set var="subChildImageSrc" value="${(subChildElement.isSimilar eq true) ? '/moduleResources/datacomparison/images/squareBracket-green.jpg' : '/moduleResources/datacomparison/images/squareBracket-red.jpg'}" />
+																	</c:when>
+																	<c:when test="${subChildElement.propertyType eq 3}">
+																		<c:set var="subChildImageSrc" value="${(subChildElement.isSimilar eq true) ? '/moduleResources/datacomparison/images/curlyBracket-green.jpg' : '/moduleResources/datacomparison/images/curlyBracket-red.jpg'}" />
+																	</c:when>
+																</c:choose>
+																
+																<c:set var="cssClass" value="${(subChildElement.isSimilar eq true) ? 'green' : 'red'}" />
+																<c:set var="subChildPropertyName" value="${(subChildElement.propertyName eq null) ? '' : subChildElement.propertyName}" />
+																
+																<span class="${cssClass}">
+																	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="${pageContext.request.contextPath}${subChildImageSrc}" class="imageClass" />
+																	<label class="propertyName">${subChildPropertyName}</label>&nbsp;:&nbsp;<label class="propertyValue">${subChildElement.propertyValue}</label>
+																</span>
+																<br/>
+																
+															</c:forEach>
+														</div>
+													</c:when>
+												</c:choose>
+												<!-- End of rendering 2nd level childs -->
+												
 											</span>
 											<br/>
 										</c:forEach>
