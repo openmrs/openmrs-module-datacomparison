@@ -18,8 +18,11 @@ import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.swing.text.Element;
 
@@ -551,6 +554,133 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 				}
 				
 			} else if (existingElementMeta.getPropertyType() == DataComparisonConsts.MAP_DATA_TYPE) {
+				
+				// Map data type property
+				if (existingItemPropertyValue.equals(incomingItemPropertyValue)) {
+					
+					Map<String, ?> tst = (Map<String, ?>)existingItemPropertyValue;
+					
+					
+					int genericType = -1;
+					
+					
+					for (Map.Entry<String, ?> entry : ((Map<String, ?>)existingItemPropertyValue).entrySet()) {
+						
+						if (isSimpleDataType(entry.getValue(), null)) {
+							genericType = DataComparisonConsts.SIMPLE_DATA_TYPE;
+						} else if (Reflect.isCollection(entry.getValue())) {
+							genericType = DataComparisonConsts.COLLECTION_DATA_TYPE;
+						} else if (isMap(entry.getValue(), null)) {
+							genericType = DataComparisonConsts.MAP_DATA_TYPE;
+						} else if (isOpenMrsObject(entry.getValue(), null)) {
+							genericType = DataComparisonConsts.OPENMRS_DATA_TYPE;
+						}
+						
+						break;
+						
+					}
+					
+					existingSubElmentMetaList = new ArrayList<ElementMeta>();
+						
+					if (genericType == DataComparisonConsts.SIMPLE_DATA_TYPE) {
+						
+						for (Map.Entry<String, ?> entry : ((Map<String, ?>)existingItemPropertyValue).entrySet()) {
+							
+							ElementMeta em = new ElementMeta();
+							
+							em.setIsComplex(false);
+							em.setLevel(2);
+							em.setPropertyType(DataComparisonConsts.SIMPLE_DATA_TYPE);
+							em.setPropertyName(entry.getKey());
+							em.setPropertyValue(entry.getValue().toString());
+							em.setSubElmentMetaList(null);
+							em.setIsSimilar(true);
+							
+							existingSubElmentMetaList.add(em);
+							
+						}
+						
+						// Since both are same
+						existingElementMeta.setSubElmentMetaList(existingSubElmentMetaList);
+						incomingElementMeta.setSubElmentMetaList(existingSubElmentMetaList);
+						
+						metaItems.put("existingItem", existingElementMeta);
+						metaItems.put("incomingItem", incomingElementMeta);
+						
+						rowMeta.setMetaItems(metaItems);
+						rowMeta.setIsSimilar(true);
+						
+					} else if (genericType == DataComparisonConsts.COLLECTION_DATA_TYPE) {
+						
+						
+						
+					} else if (genericType == DataComparisonConsts.MAP_DATA_TYPE) {
+						
+						
+						
+					} else if (genericType == DataComparisonConsts.OPENMRS_DATA_TYPE) {
+						
+						for (Map.Entry<String, ?> entry : ((Map<String, ?>)existingItemPropertyValue).entrySet()) {
+							
+							ElementMeta em = new ElementMeta();
+							
+							em.setIsComplex(true);
+							em.setLevel(2);
+							em.setPropertyType(DataComparisonConsts.OPENMRS_DATA_TYPE);
+							em.setPropertyName(entry.getKey());
+							em.setPropertyValue("This level not display");
+							em.setSubElmentMetaList(null);
+							em.setIsSimilar(true);
+							
+							existingSubElmentMetaList.add(em);
+							
+						}
+						
+						// Since both are same
+						existingElementMeta.setSubElmentMetaList(existingSubElmentMetaList);
+						incomingElementMeta.setSubElmentMetaList(existingSubElmentMetaList);
+						
+						metaItems.put("existingItem", existingElementMeta);
+						metaItems.put("incomingItem", incomingElementMeta);
+						
+						rowMeta.setMetaItems(metaItems);
+						rowMeta.setIsSimilar(true);
+						
+					}
+						
+					
+
+					
+					Set<?> set = ((Map<String, ?>) existingItemPropertyValue).entrySet();
+			        Iterator<?> iterator = set.iterator();
+			        String valueClassType="";
+			        
+			        while (iterator.hasNext()) {
+			        	
+			            Map.Entry entry = (Entry) iterator.next();
+			            
+			            if (isSimpleDataType(entry.getValue(), null)) {
+			            	
+			            	
+			            	
+			            } else if (true) {
+			            	
+			            }
+			            
+			            valueClassType = entry.getValue().getClass().getSimpleName();
+			            System.out.println("key type : "+entry.getKey().getClass().getSimpleName());
+			            System.out.println("value type : "+valueClassType);
+			            
+			        }
+
+
+					
+				} else {
+					
+					
+					
+				}
+				
 				
 			} else if (existingElementMeta.getPropertyType() == DataComparisonConsts.OPENMRS_DATA_TYPE) {
 				
