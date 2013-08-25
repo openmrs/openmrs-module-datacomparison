@@ -19,13 +19,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
-import javax.swing.text.Element;
 
 import org.openmrs.OpenmrsObject;
 import org.openmrs.api.APIException;
@@ -115,9 +112,6 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 			
 			if (existingItemMeta.getIsComplex() || incomingItemMeta.getIsComplex()) {
 				rowMeta = getChildElementMeta(rowMeta, existingItemFieldValue, incomingItemFieldValue, fields.get(i));
-				
-			} else {
-				
 			}
 			
 			rowMeta.setPropertyName(fields.get(i).getName());
@@ -201,7 +195,139 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 							
 							// If elements of the collection are OpenMRS object type
 							
+							ElementMeta childSubElementMeta;
+							ElementMeta childElementMeta;
 							
+							List<ElementMeta> childElementMetaList = new ArrayList<ElementMeta>();
+							List<ElementMeta> childSubElementMetaList = new ArrayList<ElementMeta>();
+							
+							
+							List<Field> childObjectFields = Reflect.getAllFields(genericClass);
+							
+							for (Object obj : existingCollectionProperty) {
+								
+								childElementMeta = new ElementMeta();
+								
+								for (int a=0; a<childObjectFields.size(); a++) {
+									
+									childObjectFields.get(a).setAccessible(true);
+									
+									childSubElementMeta = new ElementMeta();
+									
+									childSubElementMeta.setIsSimilar(true);
+									childSubElementMeta.setPropertyName(childObjectFields.get(a).getName());
+									childSubElementMeta.setLevel(2);
+									childSubElementMeta.setSubElmentMetaList(null);
+									
+									if (childObjectFields.get(a).get(obj) != null) {
+										if (isSimpleDataType(childObjectFields.get(a).get(obj), null)) {
+											childSubElementMeta.setIsComplex(false);
+											childSubElementMeta.setPropertyValue(childObjectFields.get(a).get(obj).toString());
+										} else {
+											childSubElementMeta.setIsComplex(true);
+											if (Reflect.isCollection(childObjectFields.get(a).get(obj))) {
+												childSubElementMeta.setPropertyType(DataComparisonConsts.COLLECTION_DATA_TYPE);
+												childSubElementMeta.setPropertyValue("Collection data not described in this level");
+											} else if (isOpenMrsObject(childObjectFields.get(a).get(obj), null)) {
+												childSubElementMeta.setPropertyType(DataComparisonConsts.OPENMRS_DATA_TYPE);
+												childSubElementMeta.setPropertyValue("OpenMRS object not described in this level");
+											} else if (isMap(childObjectFields.get(a).get(obj), null)) {
+												childSubElementMeta.setPropertyType(DataComparisonConsts.MAP_DATA_TYPE);
+												childSubElementMeta.setPropertyValue("Map data not described in this level");
+											} else {
+												childSubElementMeta.setPropertyValue("Not identified");
+											}
+										}
+									} else {
+										childSubElementMeta.setIsComplex(false);
+										childSubElementMeta.setPropertyValue(DataComparisonConsts.NULL);
+									}
+									
+									childSubElementMetaList.add(childSubElementMeta);
+									
+								}
+								
+								childElementMeta.setIsSimilar(true);
+								childElementMeta.setIsComplex(true);
+								childElementMeta.setLevel(1);
+								childElementMeta.setPropertyName("");
+								childElementMeta.setSubElmentMetaList(childSubElementMetaList);
+								
+								childElementMetaList.add(childElementMeta);
+								
+							}
+							
+							existingElementMeta.setSubElmentMetaList(childElementMetaList);
+							incomingElementMeta.setSubElmentMetaList(childElementMetaList);
+							
+							metaItems.put("existingItem", existingElementMeta);
+							metaItems.put("incomingItem", incomingElementMeta);
+							
+							rowMeta.setMetaItems(metaItems);
+							rowMeta.setIsSimilar(true);
+							
+						} else if (isOpenMrsObject(null, genericClass)) {
+							
+							int genericType = -1;
+							
+							for (Map.Entry<String, ?> entry : ((Map<String, ?>)existingItemPropertyValue).entrySet()) {
+								
+								if (isSimpleDataType(entry.getValue(), null)) {
+									genericType = DataComparisonConsts.SIMPLE_DATA_TYPE;
+								} else if (Reflect.isCollection(entry.getValue())) {
+									genericType = DataComparisonConsts.COLLECTION_DATA_TYPE;
+								} else if (isMap(entry.getValue(), null)) {
+									genericType = DataComparisonConsts.MAP_DATA_TYPE;
+								} else if (isOpenMrsObject(entry.getValue(), null)) {
+									genericType = DataComparisonConsts.OPENMRS_DATA_TYPE;
+								}
+								
+								break;
+								
+							}
+							
+							if (genericType == DataComparisonConsts.SIMPLE_DATA_TYPE) {
+								
+								existingSubElmentMetaList = new ArrayList<ElementMeta>();
+								
+								for (Map.Entry<String, ?> entry : ((Map<String, ?>)existingItemPropertyValue).entrySet()) {
+									
+									ElementMeta em = new ElementMeta();
+									
+									em.setIsComplex(false);
+									em.setLevel(2);
+									em.setPropertyType(DataComparisonConsts.SIMPLE_DATA_TYPE);
+									em.setPropertyName(entry.getKey());
+									em.setPropertyValue(entry.getValue().toString());
+									em.setSubElmentMetaList(null);
+									em.setIsSimilar(true);
+									
+									existingSubElmentMetaList.add(em);
+									
+								}
+								
+								// Since both are same
+								existingElementMeta.setSubElmentMetaList(existingSubElmentMetaList);
+								incomingElementMeta.setSubElmentMetaList(existingSubElmentMetaList);
+								
+								metaItems.put("existingItem", existingElementMeta);
+								metaItems.put("incomingItem", incomingElementMeta);
+								
+								rowMeta.setMetaItems(metaItems);
+								rowMeta.setIsSimilar(true);
+								
+							} else {
+								
+								existingElementMeta.setPropertyValue("Complex data types are not described in this level");
+								incomingElementMeta.setPropertyValue("Complex data types are not described in this level");
+								
+								metaItems.put("existingItem", existingElementMeta);
+								metaItems.put("incomingItem", incomingElementMeta);
+								
+								rowMeta.setMetaItems(metaItems);
+								rowMeta.setIsSimilar(true);
+								
+							}
 							
 						}
 						
@@ -550,7 +676,24 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 						
 					}
 					
-				} else {
+				} else if ((existingCollectionProperty.size() == 0) && (incomingCollectionProperty.size() == 0)) {
+					
+					existingElementMeta.setIsSimilar(true);
+					incomingElementMeta.setIsSimilar(true);
+					
+					metaItems.put("existingItem", existingElementMeta);
+					metaItems.put("incomingItem", incomingElementMeta);
+					
+					rowMeta.setMetaItems(metaItems);
+					rowMeta.setIsSimilar(true);
+					
+				} else if (existingCollectionProperty.size() > 0) {
+					
+					
+					
+				} else if (incomingCollectionProperty.size() > 0) {
+					
+					
 					
 				}
 				
@@ -714,7 +857,6 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 								
 							}
 							
-							
 						} else {
 							
 							Set<?> existingMapEntrySet = existingMap.entrySet();
@@ -817,7 +959,6 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 						rowMeta.setIsSimilar(false);
 						
 					}
-					
 					
 				}
 				
@@ -926,19 +1067,20 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 							&& (existingElementMeta.getPropertyType() == DataComparisonConsts.MAP_DATA_TYPE)
 						) {
 							
-							
+							if (existingChildFieldValue.equals(incomingChildFieldValue)) {
+								existingChildElementMeta.setIsSimilar(true);
+								incomingChildElementMeta.setIsSimilar(true);
+							} else {
+								existingChildElementMeta.setIsSimilar(false);
+								incomingChildElementMeta.setIsSimilar(false);
+							}
 							
 						}
-						
-						
-						
-						
 						
 					}
 					
 					existingSubElmentMetaList.add(existingChildElementMeta);
 					incomingSubElmentMetaList.add(incomingChildElementMeta);
-					
 					
 				}
 				
