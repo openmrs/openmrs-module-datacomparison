@@ -27,6 +27,9 @@
 	<bean class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"/>
 	
 <!-- 	<context:component-scan base-package="org.openmrs.module.datacomparison.web.controller" /> -->
- 
+ 	
+ 	<bean id="datacomparisonmodulesportletController"
+    	class="org.openmrs.module.datacomparison.web.controller.DataComparisonModuleController">
+	</bean>
 		
 </beans>
