@@ -28,7 +28,18 @@
 	
 <!-- 	<context:component-scan base-package="org.openmrs.module.datacomparison.web.controller" /> -->
  	
- 	<bean id="datacomparisonmodulesportletController"
+	<bean id="dataComparisonUrlMapping" class="org.springframework.web.servlet.handler.SimpleUrlHandlerMapping">
+		<property name="order">
+			<value>2</value>
+		</property>
+		<property name="mappings">
+			<props>
+				<prop key="**/comparisonView.portlet">datacomparisonmodulesportletController</prop>
+			</props>
+		</property>
+	</bean>
+    
+    <bean id="datacomparisonmodulesportletController" 
     	class="org.openmrs.module.datacomparison.web.controller.DataComparisonModuleController">
 	</bean>
 		

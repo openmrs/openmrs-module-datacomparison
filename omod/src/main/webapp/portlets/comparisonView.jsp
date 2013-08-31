@@ -1,5 +1,3 @@
-<prop key="**/datacomparisonmodulesportlet.portlet">datacomparisonmodulesportletController</prop>
-
 <%@ include file="/WEB-INF/template/include.jsp"%>
 
 <openmrs:htmlInclude file="${pageContext.request.contextPath}/moduleResources/datacomparison/css/datacomparison.css"/>
