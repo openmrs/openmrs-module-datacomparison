@@ -42,6 +42,21 @@ public class DataComparisonModuleController extends PortletController {
 	@Override
 	protected void populateModel(HttpServletRequest request, Map<String, Object> model) {
 	    
+		// Type of the objects, need to compare
+		String className = (String) model.get("className");
+		
+		// Id of the existing object
+		Object existingObjectId = model.get("existing");
+		
+		// Following cannot be done since I don't know which service and which method is used for get the relevant object from it's id
+		// Context.getPatientService().getPatient(101);
+		
+		// Object identifier in uploaded package for incoming object
+		Object incomingObjectId = model.get("incoming");
+		
+		// How could I get the incomingObject using incomingObjectId without having the reference to uploaded package (or object list in the package)
+		
+		
 		SimpleObject existingItem = new SimpleObject();
         SimpleObject incomingItem = new SimpleObject();
         
