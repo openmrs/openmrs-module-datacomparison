@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * This class configured as controller using annotation and mapped with the URL of 'module/basicmodule/basicmoduleLink.form'.
  */
 @Controller
-public class DataComparisonModuleFormController{
+public class DataComparisonFormController{
 	
 	/** Logger for this class and subclasses */
 	protected final Log log = LogFactory.getLog(getClass());
