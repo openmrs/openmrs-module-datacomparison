@@ -40,7 +40,7 @@
 	</bean>
     
     <bean id="datacomparisonmodulesportletController" 
-    	class="org.openmrs.module.datacomparison.web.controller.DataComparisonModuleController">
+    	class="org.openmrs.module.datacomparison.web.controller.DataComparisonPortletController">
 	</bean>
 		
 </beans>
