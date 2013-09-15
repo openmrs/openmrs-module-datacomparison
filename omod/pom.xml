@@ -24,6 +24,14 @@
 			<artifactId>openmrs-api</artifactId>
 			<type>jar</type>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>metadatasharing-api-common</artifactId>
+			<type>jar</type>
+			<version>1.1.9-SNAPSHOT</version>
+		</dependency>
+		
 		<dependency>
 			<groupId>org.openmrs.api</groupId>
 			<artifactId>openmrs-api</artifactId>

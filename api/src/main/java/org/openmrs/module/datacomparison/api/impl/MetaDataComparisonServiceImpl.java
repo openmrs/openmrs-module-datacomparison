@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.hibernate.Hibernate;
 import org.openmrs.OpenmrsObject;
 import org.openmrs.api.APIException;
 import org.openmrs.api.impl.BaseOpenmrsService;
@@ -94,16 +95,20 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
             	incomingItemMeta.setPropertyValue(DataComparisonConsts.NULL);
 			}
 			
-			if ((existingItemFieldValue != null) && (incomingItemFieldValue != null)) {
-				if (existingItemFieldValue.equals(incomingItemFieldValue)) {
-                	rowMeta.setIsSimilar(true);
-                } else {
-                	rowMeta.setIsSimilar(false);
-                }
-			} else if ((existingItemFieldValue == null) && (incomingItemFieldValue == null)) {
-				rowMeta.setIsSimilar(true);
-			} else {
-				rowMeta.setIsSimilar(false);
+			try {
+				if ((existingItemFieldValue != null) && (incomingItemFieldValue != null)) {
+					if (existingItemFieldValue.equals(incomingItemFieldValue)) {
+	                	rowMeta.setIsSimilar(true);
+	                } else {
+	                	rowMeta.setIsSimilar(false);
+	                }
+				} else if ((existingItemFieldValue == null) && (incomingItemFieldValue == null)) {
+					rowMeta.setIsSimilar(true);
+				} else {
+					rowMeta.setIsSimilar(false);
+				}
+			}catch(Exception e) {
+				e.printStackTrace();
 			}
 			
 			metaItems.put("existingItem", existingItemMeta);
