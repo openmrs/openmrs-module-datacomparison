@@ -13,7 +13,6 @@
  */
 package org.openmrs.module.datacomparison.web.controller;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -24,13 +23,11 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.hibernate.Hibernate;
 import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.datacomparison.RowMeta;
 import org.openmrs.module.datacomparison.SimpleObject;
 import org.openmrs.module.metadatasharing.ImportedItem;
-import org.openmrs.util.Reflect;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -54,51 +51,8 @@ public class DataComparisonFormController{
 	 * Initially called after the formBackingObject method to get the landing form name  
 	 * @return String form view name
 	 */
-	@RequestMapping(method = RequestMethod.POST, value = "module/datacomparison/datacomparisonmoduleLink.form")
+	@RequestMapping(method = RequestMethod.GET, value = "module/datacomparison/datacomparisonmoduleLink.form")
 	public String showForm(final ModelMap model, HttpServletRequest httpRequest, @ModelAttribute("item") ImportedItem item ) throws IllegalAccessException, Exception {
-		
-		// Type of the objects, need to compare
-		String className = httpRequest.getParameter("className");
-		
-		String cname = "";
-		Object existingItemFieldValue = null;
-		Object incomingItemFieldValue = null;
-		
-		try {
-			
-			httpRequest.getSession().getAttribute("item").getClass().getClassLoader().toString();
-			Object tst = httpRequest.getSession().getAttribute("item");
-			
-			Class c = tst.getClass();
-			List<Field> fields = Reflect.getAllFields(c);
-			
-			for (int i=0; i<fields.size(); i++) {
-				
-				fields.get(i).setAccessible(true);
-				
-				if (fields.get(i).getName().equals("classname")) {
-					cname = (String) fields.get(i).get(tst);
-				}
-				
-				if (fields.get(i).getName().equals("existing")) {
-					existingItemFieldValue = fields.get(i).get(tst);
-				}
-				
-				if (fields.get(i).getName().equals("incoming")) {
-					incomingItemFieldValue = fields.get(i).get(tst);
-				}
-				
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		
-		// Id of the existing object
-		Object existingObject = null;
-		// Object identifier in uploaded package for incoming object
-		Object incomingObject = null;
 		
 		SimpleObject existingItem = new SimpleObject();
         SimpleObject incomingItem = new SimpleObject();
@@ -135,12 +89,12 @@ public class DataComparisonFormController{
     	Patient incomingPatient = Context.getPatientService().getPatient(105);
     	Context.removeProxyPrivilege("View Patients");
     	
-    	if ((existingItemFieldValue != null) && (incomingItemFieldValue != null)) {
+    	if ((existingPatient != null) && (incomingPatient != null)) {
     		
     		org.openmrs.module.datacomparison.api.MetaDataComparisonService co = Context.getService(org.openmrs.module.datacomparison.api.MetaDataComparisonService.class);
-            List<RowMeta> rowMetaList = co.getRowMetaList(existingItemFieldValue, incomingItemFieldValue);
+            List<RowMeta> rowMetaList = co.getRowMetaList(existingPatient, incomingPatient);
             
-            model.addAttribute("className", cname);
+            model.addAttribute("className", existingPatient.getClass().toString());
             model.addAttribute("rowMetaList", rowMetaList);
     		
     	}

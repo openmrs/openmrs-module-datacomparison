@@ -94,7 +94,6 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
             	incomingItemMeta.setPropertyType(DataComparisonConsts.SIMPLE_DATA_TYPE);
             	incomingItemMeta.setPropertyValue(DataComparisonConsts.NULL);
 			}
-			
 			try {
 				if ((existingItemFieldValue != null) && (incomingItemFieldValue != null)) {
 					if (existingItemFieldValue.equals(incomingItemFieldValue)) {
@@ -110,7 +109,6 @@ public class MetaDataComparisonServiceImpl extends BaseOpenmrsService implements
 			}catch(Exception e) {
 				e.printStackTrace();
 			}
-			
 			metaItems.put("existingItem", existingItemMeta);
 			metaItems.put("incomingItem", incomingItemMeta);
 			rowMeta.setMetaItems(metaItems);
