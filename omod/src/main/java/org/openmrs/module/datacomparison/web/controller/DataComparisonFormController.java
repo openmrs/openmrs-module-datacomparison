@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -28,6 +29,9 @@ import org.openmrs.api.context.Context;
 import org.openmrs.module.datacomparison.RowMeta;
 import org.openmrs.module.datacomparison.SimpleObject;
 import org.openmrs.module.metadatasharing.ImportedItem;
+import org.openmrs.module.metadatasharing.ImportedPackage;
+import org.openmrs.module.metadatasharing.Item;
+import org.openmrs.module.metadatasharing.MetadataSharing;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -53,6 +57,12 @@ public class DataComparisonFormController{
 	 */
 	@RequestMapping(method = RequestMethod.GET, value = "module/datacomparison/datacomparisonmoduleLink.form")
 	public String showForm(final ModelMap model, HttpServletRequest httpRequest, @ModelAttribute("item") ImportedItem item ) throws IllegalAccessException, Exception {
+		
+		String packageGroupUuid = httpRequest.getParameter("packageGroupUuid");
+		ImportedPackage importedPackage = MetadataSharing.getService().getImportedPackageByGroup(packageGroupUuid);
+		
+		Set<Item> items = importedPackage.getItems();
+		
 		
 		SimpleObject existingItem = new SimpleObject();
         SimpleObject incomingItem = new SimpleObject();
