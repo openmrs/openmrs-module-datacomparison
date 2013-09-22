@@ -18,7 +18,6 @@ import java.lang.reflect.Method;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -27,19 +26,15 @@ import java.util.TreeMap;
 
 import junit.framework.Assert;
 
-import org.apache.poi.hssf.record.formula.functions.Char;
 import org.junit.Before;
 import org.junit.Test;
 import org.openmrs.ConceptAnswer;
 import org.openmrs.EncounterType;
 import org.openmrs.LocationAttributeType;
 import org.openmrs.Order;
-import org.openmrs.OrderType;
 import org.openmrs.Patient;
 import org.openmrs.PersonAttribute;
 import org.openmrs.api.context.Context;
-import org.openmrs.module.datacomparison.DataComparisonConsts;
-import org.openmrs.module.datacomparison.ElementMeta;
 import org.openmrs.module.datacomparison.api.impl.MetaDataComparisonServiceImpl;
 import org.openmrs.test.BaseModuleContextSensitiveTest;
 
@@ -270,8 +265,6 @@ public class MetaDataComparisonServiceTest extends BaseModuleContextSensitiveTes
 	@Test
 	public void testIsSimpleDataTypeWhenPropertyValueIsAvailable() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		
-		Class arr[] = {Object.class, Class.class};
-		
 		Map<Integer, Object[]> argsMap = new HashMap<Integer, Object[]>();
 		
 		argsMap.put(0, new Object[] {true, null});
@@ -315,8 +308,6 @@ public class MetaDataComparisonServiceTest extends BaseModuleContextSensitiveTes
 	 */
 	@Test
 	public void testIsSimpleDataTypeWhenClassTypeIsAvailable() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		
-		Class arr[] = {Object.class, Class.class};
 		
 		Map<Integer, Object[]> argsMap = new HashMap<Integer, Object[]>();
 		
@@ -362,8 +353,6 @@ public class MetaDataComparisonServiceTest extends BaseModuleContextSensitiveTes
 	@Test
 	public void testIsSimpleDataTypeForFalseWhenComplexPropertyValueIsAvailable() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		
-		Class arr[] = {Object.class, Class.class};
-		
 		Map<Integer, Object[]> argsMap = new HashMap<Integer, Object[]>();
 		
 		List<String> list = new ArrayList<String>();
@@ -400,8 +389,6 @@ public class MetaDataComparisonServiceTest extends BaseModuleContextSensitiveTes
 	@Test
 	public void testIsSimpleDataTypeForFalseWhenComplexClassTypeIsAvailable() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		
-		Class arr[] = {Object.class, Class.class};
-		
 		Map<Integer, Object[]> argsMap = new HashMap<Integer, Object[]>();
 		
 		argsMap.put(0, new Object[] {null, java.util.List.class});
@@ -430,8 +417,6 @@ public class MetaDataComparisonServiceTest extends BaseModuleContextSensitiveTes
 	@Test
 	public void testIsSimpleDataTypeForFalseWhenBothArgumentsAreNull() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		
-		Class arr[] = {Object.class, Class.class};
-		
 		Method method = metaDataComparisonServiceImpl.getClass().getDeclaredMethod("isSimpleDataType", new Class[] {Object.class, Class.class});
 		method.setAccessible(true);
 		boolean result = (Boolean) method.invoke(metaDataComparisonServiceImpl, new Object[] {null, null});
@@ -446,8 +431,6 @@ public class MetaDataComparisonServiceTest extends BaseModuleContextSensitiveTes
 	 */
 	@Test
 	public void testIsMapWhenPropertyValueIsAvailable() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		
-		Class arr[] = {Object.class, Class.class};
 		
 		Map<Integer, String> hashMap = new HashMap<Integer, String>();
 		hashMap.put(1, "Value1");
@@ -486,8 +469,6 @@ public class MetaDataComparisonServiceTest extends BaseModuleContextSensitiveTes
 	@Test
 	public void testIsMapWhenClassTypeIsAvailable() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		
-		Class arr[] = {Object.class, Class.class};
-		
 		Map<Integer, Object[]> argsMap = new HashMap<Integer, Object[]>();
 		
 		argsMap.put(0, new Object[] {null, java.util.Map.class});
@@ -516,8 +497,6 @@ public class MetaDataComparisonServiceTest extends BaseModuleContextSensitiveTes
 	 */
 	@Test
 	public void testIsMapForFalseWhenPropertyValueIsAvailable() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		
-		Class arr[] = {Object.class, Class.class};
 		
 		List<String> list = new ArrayList<String>();
 		list.add("Element");
@@ -558,8 +537,6 @@ public class MetaDataComparisonServiceTest extends BaseModuleContextSensitiveTes
 	@Test
 	public void testIsMapForFalseWhenClassTypeIsAvailable() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		
-		Class arr[] = {Object.class, Class.class};
-		
 		Map<Integer, Object[]> argsMap = new HashMap<Integer, Object[]>();
 		
 		argsMap.put(0, new Object[] {null, java.lang.String.class});
@@ -594,8 +571,6 @@ public class MetaDataComparisonServiceTest extends BaseModuleContextSensitiveTes
 	@Test
 	public void testIsMapForFalseWhenBothArgumentsAreNull() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		
-		Class arr[] = {Object.class, Class.class};
-		
 		Method method = metaDataComparisonServiceImpl.getClass().getDeclaredMethod("isMap", new Class[] {Object.class, Class.class});
 		method.setAccessible(true);
 		boolean result = (Boolean) method.invoke(metaDataComparisonServiceImpl, new Object[] {null, null});
@@ -610,8 +585,6 @@ public class MetaDataComparisonServiceTest extends BaseModuleContextSensitiveTes
 	 */
 	@Test
 	public void testIsOpenMrsObjectWhenPropertyValueIsAvailable() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		
-		Class arr[] = {Object.class, Class.class};
 		
 		Map<Integer, Object[]> argsMap = new HashMap<Integer, Object[]>();
 		
@@ -644,8 +617,6 @@ public class MetaDataComparisonServiceTest extends BaseModuleContextSensitiveTes
 	@Test
 	public void testIsOpenMrsObjectWhenClassTypeIsAvailable() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		
-		Class arr[] = {Object.class, Class.class};
-		
 		Map<Integer, Object[]> argsMap = new HashMap<Integer, Object[]>();
 		
 		argsMap.put(0, new Object[] {null, org.openmrs.ConceptMap.class});
@@ -676,8 +647,6 @@ public class MetaDataComparisonServiceTest extends BaseModuleContextSensitiveTes
 	 */
 	@Test
 	public void testIsOpenMrsObjectForFalseWhenPropertyValueIsAvailable() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		
-		Class arr[] = {Object.class, Class.class};
 		
 		List<String> list = new ArrayList<String>();
 		list.add("Element");
@@ -719,8 +688,6 @@ public class MetaDataComparisonServiceTest extends BaseModuleContextSensitiveTes
 	@Test
 	public void testIsOpenMrsObjectForFalseWhenClassTypeIsAvailable() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
 		
-		Class arr[] = {Object.class, Class.class};
-		
 		Map<Integer, Object[]> argsMap = new HashMap<Integer, Object[]>();
 		
 		argsMap.put(0, new Object[] {null, java.lang.String.class});
@@ -754,8 +721,6 @@ public class MetaDataComparisonServiceTest extends BaseModuleContextSensitiveTes
 	 */
 	@Test
 	public void testIsOpenMrsObjectForFalseWhenBothArgumentsAreNull() throws NoSuchMethodException, SecurityException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
-		
-		Class arr[] = {Object.class, Class.class};
 		
 		Method method = metaDataComparisonServiceImpl.getClass().getDeclaredMethod("isOpenMrsObject", new Class[] {Object.class, Class.class});
 		method.setAccessible(true);
