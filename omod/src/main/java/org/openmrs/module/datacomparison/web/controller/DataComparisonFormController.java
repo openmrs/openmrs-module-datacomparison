@@ -32,6 +32,7 @@ import org.openmrs.module.metadatasharing.ImportedItem;
 import org.openmrs.module.metadatasharing.ImportedPackage;
 import org.openmrs.module.metadatasharing.Item;
 import org.openmrs.module.metadatasharing.MetadataSharing;
+import org.openmrs.module.metadatasharing.wrapper.PackageImporter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -56,12 +57,18 @@ public class DataComparisonFormController{
 	 * @return String form view name
 	 */
 	@RequestMapping(method = RequestMethod.GET, value = "module/datacomparison/datacomparisonmoduleLink.form")
-	public String showForm(final ModelMap model, HttpServletRequest httpRequest, @ModelAttribute("item") ImportedItem item ) throws IllegalAccessException, Exception {
+	public String showForm(final ModelMap model, HttpServletRequest httpRequest, @ModelAttribute("item") ImportedItem item) throws IllegalAccessException, Exception {
 		
 		String packageGroupUuid = httpRequest.getParameter("packageGroupUuid");
 		ImportedPackage importedPackage = MetadataSharing.getService().getImportedPackageByGroup(packageGroupUuid);
 		
+		
 		Set<Item> items = importedPackage.getItems();
+		// items is empty
+		
+		PackageImporter importertst = MetadataSharing.getInstance().newPackageImporter();
+		// importedPackage.getSerializedPackageStream() is null
+		//importertst.loadSerializedPackageStream(importedPackage.getSerializedPackageStream());
 		
 		
 		SimpleObject existingItem = new SimpleObject();
