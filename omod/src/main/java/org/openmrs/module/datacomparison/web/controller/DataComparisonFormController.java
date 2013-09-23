@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
  * This class configured as controller using annotation and mapped with the URL of 'module/basicmodule/basicmoduleLink.form'.
  */
 @Controller
-public class DataComparisonFormController{
+public class DataComparisonFormController {
 	
 	/** Logger for this class and subclasses */
 	protected final Log log = LogFactory.getLog(getClass());
@@ -51,20 +51,30 @@ public class DataComparisonFormController{
 	 * @return String form view name
 	 */
 	@RequestMapping(method = RequestMethod.GET, value = "module/datacomparison/datacomparisonmoduleLink.form")
-	public String showForm(final ModelMap model, HttpServletRequest httpRequest) throws IllegalAccessException, Exception {
+	public String showForm(final ModelMap model, HttpServletRequest httpRequest) {
 		
-		Object existingItem = httpRequest.getSession().getAttribute("existingItem");
-		Object incomingItem = httpRequest.getSession().getAttribute("incomingItem");
-    	
-    	if ((existingItem != null) && (incomingItem != null)) {
-    		
-    		org.openmrs.module.datacomparison.api.MetaDataComparisonService co = Context.getService(org.openmrs.module.datacomparison.api.MetaDataComparisonService.class);
-            List<RowMeta> rowMetaList = co.getRowMetaList(existingItem, incomingItem);
-            
-            model.addAttribute("className", existingItem.getClass().toString());
-            model.addAttribute("rowMetaList", rowMetaList);
-    		
-    	}
+		try {
+			
+			Object existingItem = httpRequest.getSession().getAttribute("existingItem");
+			Object incomingItem = httpRequest.getSession().getAttribute("incomingItem");
+	    	
+	    	if ((existingItem != null) && (incomingItem != null)) {
+	    		
+	    		org.openmrs.module.datacomparison.api.MetaDataComparisonService co = Context.getService(org.openmrs.module.datacomparison.api.MetaDataComparisonService.class);
+	            List<RowMeta> rowMetaList = co.getRowMetaList(existingItem, incomingItem);
+	            
+	            model.addAttribute("className", existingItem.getClass().toString());
+	            model.addAttribute("rowMetaList", rowMetaList);
+	    		
+	    	}
+			
+		} catch (Exception e) {
+			
+			log.error(e);
+			model.addAttribute("className", null);
+            model.addAttribute("rowMetaList", null);
+			
+		}
 		
 		return SUCCESS_FORM_VIEW;
 		
