@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -28,11 +27,6 @@ import org.openmrs.Patient;
 import org.openmrs.api.context.Context;
 import org.openmrs.module.datacomparison.RowMeta;
 import org.openmrs.module.datacomparison.SimpleObject;
-import org.openmrs.module.metadatasharing.ImportedItem;
-import org.openmrs.module.metadatasharing.ImportedPackage;
-import org.openmrs.module.metadatasharing.Item;
-import org.openmrs.module.metadatasharing.MetadataSharing;
-import org.openmrs.module.metadatasharing.wrapper.PackageImporter;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
@@ -57,61 +51,17 @@ public class DataComparisonFormController{
 	 * @return String form view name
 	 */
 	@RequestMapping(method = RequestMethod.GET, value = "module/datacomparison/datacomparisonmoduleLink.form")
-	public String showForm(final ModelMap model, HttpServletRequest httpRequest, @ModelAttribute("item") ImportedItem item) throws IllegalAccessException, Exception {
+	public String showForm(final ModelMap model, HttpServletRequest httpRequest) throws IllegalAccessException, Exception {
 		
-		String packageGroupUuid = httpRequest.getParameter("packageGroupUuid");
-		ImportedPackage importedPackage = MetadataSharing.getService().getImportedPackageByGroup(packageGroupUuid);
-		
-		
-		Set<Item> items = importedPackage.getItems();
-		// items is empty
-		
-		PackageImporter importertst = MetadataSharing.getInstance().newPackageImporter();
-		// importedPackage.getSerializedPackageStream() is null
-		//importertst.loadSerializedPackageStream(importedPackage.getSerializedPackageStream());
-		
-		
-		SimpleObject existingItem = new SimpleObject();
-        SimpleObject incomingItem = new SimpleObject();
-        
-        existingItem.setSimpleInt(0);
-        existingItem.setSimpleBoolean(null);
-        existingItem.setSimpleString("Existing");
-        existingItem.setSimpleFloat(12.5f);
-        existingItem.setSimpleDate(Calendar.getInstance().getTime());
-        
-        incomingItem.setSimpleInt(0);
-        incomingItem.setSimpleBoolean((Boolean) false);
-        incomingItem.setSimpleString("Incoming");
-        incomingItem.setSimpleFloat(13.5f);
-        incomingItem.setSimpleDate(Calendar.getInstance().getTime());
-        
-        List<String> strList = new ArrayList<String>();
-        strList.add("A");
-        strList.add("B");
-        strList.add("C");
-        
-        List<String> strListB = new ArrayList<String>();
-        strListB.add("G");
-        strListB.add("M");
-        strListB.add("C");
-        strListB.add("B");
-        strListB.add("P");
-        
-        existingItem.setStrList(strList);
-        incomingItem.setStrList(strListB);
-        
-        Context.addProxyPrivilege("View Patients");
-    	Patient existingPatient = Context.getPatientService().getPatient(101);
-    	Patient incomingPatient = Context.getPatientService().getPatient(105);
-    	Context.removeProxyPrivilege("View Patients");
+		Object existingItem = httpRequest.getSession().getAttribute("existingItem");
+		Object incomingItem = httpRequest.getSession().getAttribute("incomingItem");
     	
-    	if ((existingPatient != null) && (incomingPatient != null)) {
+    	if ((existingItem != null) && (incomingItem != null)) {
     		
     		org.openmrs.module.datacomparison.api.MetaDataComparisonService co = Context.getService(org.openmrs.module.datacomparison.api.MetaDataComparisonService.class);
-            List<RowMeta> rowMetaList = co.getRowMetaList(existingPatient, incomingPatient);
+            List<RowMeta> rowMetaList = co.getRowMetaList(existingItem, incomingItem);
             
-            model.addAttribute("className", existingPatient.getClass().toString());
+            model.addAttribute("className", existingItem.getClass().toString());
             model.addAttribute("rowMetaList", rowMetaList);
     		
     	}
